@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> f58b855 (Initial commit with Material-styled StoneFlowerHome project)
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -12,4 +16,7 @@ export default function Navbar() {
     </nav>
   );
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f58b855 (Initial commit with Material-styled StoneFlowerHome project)

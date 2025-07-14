@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+<<<<<<< HEAD
 import Home from './pages/Home';
 import Wifi from './pages/Wifi';
 import Explore from './pages/Explore';
@@ -9,12 +10,18 @@ import GuestGallery from './pages/GuestGallery';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
+=======
+import Wifi from './pages/Wifi';
+import Explore from './pages/Explore';
+import EditExplore from './pages/EditExplore';
+>>>>>>> f58b855 (Initial commit with Material-styled StoneFlowerHome project)
 
 export default function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
+<<<<<<< HEAD
         <Route path="/" element={<Home />} />
         <Route path="/wifi" element={<Wifi />} />
         <Route path="/explore" element={<Explore />} />
@@ -28,6 +35,11 @@ export default function App() {
             </PrivateRoute>
           }
         />
+=======
+        <Route path="/wifi" element={<Wifi />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/explore/edit/:id" element={<EditExplore />} />
+>>>>>>> f58b855 (Initial commit with Material-styled StoneFlowerHome project)
       </Routes>
     </Router>
   );
