@@ -44,13 +44,13 @@ export default function Wifi() {
 
   return (
     <div className="p-4 max-w-md mx-auto mt-20">
-      {/* QR Code */}
-      <div className="flex justify-center mb-6">
+      {/* QR Code in a white box */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-center">
         <QRCode
           value={`WIFI:S:${ssid};T:WPA;P:${password};;`}
           size={200}
-          bgColor="#f5deb3"
-          fgColor="#3ab0ff"
+          bgColor="#ffffff"
+          fgColor="#000000"
         />
       </div>
 
@@ -93,4 +93,3 @@ export default function Wifi() {
     </div>
   );
 }
-
