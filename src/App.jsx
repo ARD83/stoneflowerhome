@@ -1,40 +1,37 @@
-
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Wifi from './pages/Wifi';
-import Explore from './pages/Explore';
-import GuestGallery from './pages/GuestGallery';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import PrivateRoute from './components/PrivateRoute';
-import Wifi from './pages/Wifi';
-import Explore from './pages/Explore';
-import EditExplore from './pages/EditExplore';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Wifi from "./pages/Wifi";
+import Explore from "./pages/Explore";
+import EditExplore from "./pages/EditExplore";
+import GuestGallery from "./pages/GuestGallery";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
   return (
     <Router>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/wifi" element={<Wifi />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/gallery" element={<GuestGallery />} />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route
-          path="/dashboard"
-          element={
+      <div className="pt-20"> {/* Add padding for fixed navbar */}
+        <Routes>
+          <Route path="/" element={<Wifi />} />
+          <Route path="/wifi" element={<Wifi />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/explore/edit/:id" element={
+            <PrivateRoute>
+              <EditExplore />
+            </PrivateRoute>
+          } />
+          <Route path="/gallery" element={<GuestGallery />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/dashboard" element={
             <PrivateRoute>
               <AdminDashboard />
             </PrivateRoute>
-          }
-        />
-        <Route path="/wifi" element={<Wifi />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/explore/edit/:id" element={<EditExplore />} />
-      </Routes>
+          } />
+        </Routes>
+      </div>
     </Router>
   );
 }
