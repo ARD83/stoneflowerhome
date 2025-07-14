@@ -1,3 +1,9 @@
+
+import React from "react";
+export default function Wifi() {
+  return (
+    <div className="p-6 text-center mt-16">
+      
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../firebase";
@@ -12,12 +18,16 @@ export default function Wifi() {
 
   useEffect(() => {
     async function fetchWifi() {
-      const docRef = doc(db, "settings", "wifi");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setSsid(data.ssid || "");
-        setPassword(data.password || "");
+      try {
+        const docRef = doc(db, "settings", "wifi");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setSsid(data.ssid || "");
+          setPassword(data.password || "");
+        }
+      } catch (error) {
+        console.error("Error fetching Wi-Fi details:", error);
       }
       setLoading(false);
     }
@@ -25,12 +35,16 @@ export default function Wifi() {
   }, []);
 
   async function handleSave() {
-    const docRef = doc(db, "settings", "wifi");
-    await setDoc(docRef, { ssid, password });
-    alert("Wi-Fi details updated!");
+    try {
+      const docRef = doc(db, "settings", "wifi");
+      await setDoc(docRef, { ssid, password });
+      alert("Wi-Fi details updated!");
+    } catch (error) {
+      console.error("Error saving Wi-Fi details:", error);
+    }
   }
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (loading) return <div className="p-6">Loading Wi‑Fi details...</div>;
 
   return (
     <div className="p-6">
@@ -38,7 +52,7 @@ export default function Wifi() {
       <p className="text-slate-600 mb-2">SSID: <span className="font-semibold">{ssid}</span></p>
       <p className="text-slate-600 mb-4">Password: <span className="font-semibold">{password}</span></p>
       <QRCode value={`WIFI:S:${ssid};T:WPA;P:${password};;`} size={128} />
-      {currentUser && (
+      {currentUser ? (
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-2">Edit Wi‑Fi</h2>
           <input
@@ -62,7 +76,13 @@ export default function Wifi() {
             Save
           </button>
         </div>
+      ) : (
+        <p className="mt-4 text-slate-500">Login as admin to edit Wi‑Fi details.</p>
       )}
+    </div>
+  );
+}
+
     </div>
   );
 }
