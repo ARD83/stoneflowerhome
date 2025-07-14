@@ -10,6 +10,8 @@ export default function Wifi() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const ADMIN_EMAIL = "stoneflowerhome@gmail.com"; // Replace with your admin email
+
   useEffect(() => {
     async function fetchWifi() {
       try {
@@ -47,7 +49,7 @@ export default function Wifi() {
       <p className="text-slate-600 mb-4">Password: <span className="font-semibold">{password}</span></p>
       <QRCode value={`WIFI:S:${ssid};T:WPA;P:${password};;`} size={128} />
 
-      {currentUser ? (
+      {currentUser && currentUser.email === ADMIN_EMAIL ? (
         <div className="mt-6">
           <h2 className="text-xl font-bold mb-2">Edit Wi‑Fi</h2>
           <input
@@ -72,7 +74,9 @@ export default function Wifi() {
           </button>
         </div>
       ) : (
-        <p className="mt-4 text-slate-500">Login as admin to edit Wi‑Fi details.</p>
+        <p className="mt-4 text-slate-500">
+          {currentUser ? "You are not authorized to edit Wi‑Fi details." : "Login as admin to edit Wi‑Fi details."}
+        </p>
       )}
     </div>
   );
