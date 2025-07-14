@@ -1,82 +1,50 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { db, storage } from "../firebase";
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
-export default function EditExplore() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+export default function AddExplore() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Beaches");
   const [link, setLink] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const navigate = useNavigate();
 
   const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
-  useEffect(() => {
-    async function fetchItem() {
-      try {
-        const docRef = doc(db, "explore", id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setTitle(data.title);
-          setDescription(data.description);
-          setCategory(data.category);
-          setLink(data.link);
-          setImageUrl(data.image || "");
-        } else {
-          console.error("Item not found");
-        }
-      } catch (error) {
-        console.error("Error fetching item:", error);
-      }
-    }
-    fetchItem();
-  }, [id]);
-
-  async function handleSave(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let updatedImageUrl = imageUrl;
+    if (!imageFile) {
+      alert("Please select an image.");
+      return;
+    }
 
     try {
-      if (imageFile) {
-        const imageRef = ref(storage, `explore/${imageFile.name}`);
-        await uploadBytes(imageRef, imageFile);
-        updatedImageUrl = await getDownloadURL(imageRef);
-      }
+      const imageRef = ref(storage, `explore/${imageFile.name}`);
+      await uploadBytes(imageRef, imageFile);
+      const imageUrl = await getDownloadURL(imageRef);
 
-      await setDoc(doc(db, "explore", id), {
+      await addDoc(collection(db, "explore"), {
         title,
         description,
         category,
         link,
-        image: updatedImageUrl,
-        likes: 0
+        image: imageUrl,
+        likes: 0,
       });
 
       navigate("/explore");
     } catch (error) {
-      console.error("Error saving changes:", error);
+      console.error("Error adding document:", error);
     }
-  }
-
-  async function handleDelete() {
-    try {
-      await deleteDoc(doc(db, "explore", id));
-      navigate("/explore");
-    } catch (error) {
-      console.error("Error deleting item:", error);
-    }
-  }
+  };
 
   return (
     <div className="p-4 max-w-lg mx-auto mt-20">
-      <h1 className="text-2xl font-bold text-sea mb-4 text-center">Edit Explore Item</h1>
-      <form onSubmit={handleSave} className="bg-white p-4 rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold text-sea mb-4 text-center">Add Explore Item</h1>
+      <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md">
         <label className="block text-sm text-gray-600 mb-1">Category</label>
         <select
           value={category}
@@ -115,13 +83,7 @@ export default function EditExplore() {
           className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
         />
 
-        {imageUrl && (
-          <div className="mb-3">
-            <img src={imageUrl} alt="Current" className="rounded-lg shadow max-h-48 mx-auto" />
-          </div>
-        )}
-
-        <label className="block text-sm text-gray-600 mb-1">Replace Image</label>
+        <label className="block text-sm text-gray-600 mb-1">Upload Image</label>
         <input
           type="file"
           accept="image/*"
@@ -129,21 +91,12 @@ export default function EditExplore() {
           className="w-full mb-3"
         />
 
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="flex-1 bg-sea text-white p-2 rounded hover:bg-sunset"
-          >
-            Save Changes
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="flex-1 bg-coral text-white p-2 rounded hover:bg-red-700"
-          >
-            Delete Item
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="w-full bg-sea text-white p-2 rounded hover:bg-sunset"
+        >
+          Add Item
+        </button>
       </form>
     </div>
   );
