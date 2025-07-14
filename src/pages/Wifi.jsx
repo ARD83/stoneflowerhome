@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../firebase";
@@ -11,7 +10,7 @@ export default function Wifi() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const ADMIN_EMAIL = "stoneflowerhome@gmail.com"; // Replace with your admin email
+  const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
 
   useEffect(() => {
     async function fetchWifi() {
@@ -24,7 +23,7 @@ export default function Wifi() {
           setPassword(data.password || "");
         }
       } catch (error) {
-        console.error("Error fetching Wi-Fi details:", error);
+        console.error("Error fetching Wi‑Fi details:", error);
       }
       setLoading(false);
     }
@@ -35,50 +34,63 @@ export default function Wifi() {
     try {
       const docRef = doc(db, "settings", "wifi");
       await setDoc(docRef, { ssid, password });
-      alert("Wi-Fi details updated!");
+      alert("Wi‑Fi details updated!");
     } catch (error) {
-      console.error("Error saving Wi-Fi details:", error);
+      console.error("Error saving Wi‑Fi details:", error);
     }
   }
 
-  if (loading) return <div className="p-6">Loading Wi‑Fi details...</div>;
+  if (loading) return <div className="p-6 text-center">Loading Wi‑Fi details…</div>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Wi‑Fi Information</h1>
-      <p className="text-slate-600 mb-2">SSID: <span className="font-semibold">{ssid}</span></p>
-      <p className="text-slate-600 mb-4">Password: <span className="font-semibold">{password}</span></p>
-      <QRCode value={`WIFI:S:${ssid};T:WPA;P:${password};;`} size={128} />
+    <div className="p-4 max-w-md mx-auto mt-20">
+      {/* QR Code */}
+      <div className="flex justify-center mb-6">
+        <QRCode
+          value={`WIFI:S:${ssid};T:WPA;P:${password};;`}
+          size={200}
+          bgColor="#f5deb3"
+          fgColor="#3ab0ff"
+        />
+      </div>
 
-      {currentUser && currentUser.email === ADMIN_EMAIL ? (
-        <div className="mt-6">
-          <h2 className="text-xl font-bold mb-2">Edit Wi‑Fi</h2>
+      {/* Wi-Fi Details */}
+      <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+        <p className="text-sm text-gray-500">SSID</p>
+        <p className="text-lg font-medium text-gray-800">{ssid}</p>
+      </div>
+      <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <p className="text-sm text-gray-500">Password</p>
+        <p className="text-lg font-medium text-gray-800">{password}</p>
+      </div>
+
+      {/* Admin Edit Form */}
+      {currentUser && currentUser.email === ADMIN_EMAIL && (
+        <div className="bg-sand rounded-lg p-4 shadow">
+          <h2 className="text-sea font-semibold mb-2">Edit Wi‑Fi</h2>
           <input
             type="text"
-            className="w-full p-2 border rounded mb-2"
             placeholder="SSID"
             value={ssid}
             onChange={(e) => setSsid(e.target.value)}
+            className="w-full mb-2 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
           />
           <input
             type="text"
-            className="w-full p-2 border rounded mb-2"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full mb-2 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
           />
           <button
             onClick={handleSave}
-            className="bg-sea text-white px-4 py-2 rounded hover:bg-sunset"
+            className="w-full bg-sea text-white p-2 rounded hover:bg-sunset"
           >
             Save
           </button>
         </div>
-      ) : (
-        <p className="mt-4 text-slate-500">
-          {currentUser ? "You are not authorized to edit Wi‑Fi details." : "Login as admin to edit Wi‑Fi details."}
-        </p>
       )}
     </div>
   );
 }
+
