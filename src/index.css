@@ -3,4 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body { font-family: 'Helvetica', sans-serif; }
+body {
+  font-family: 'Helvetica', sans-serif;
+}
