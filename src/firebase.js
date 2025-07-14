@@ -1,5 +1,4 @@
 
-// Replace the config below with your Firebase project's credentials
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';

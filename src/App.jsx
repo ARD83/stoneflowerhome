@@ -8,18 +8,26 @@ import Explore from './pages/Explore';
 import GuestGallery from './pages/GuestGallery';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import PrivateRoute from './components/PrivateRoute';
 
 export default function App() {
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
       <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/wifi" element={<Wifi/>}/>
-        <Route path="/explore" element={<Explore/>}/>
-        <Route path="/gallery" element={<GuestGallery/>}/>
-        <Route path="/admin" element={<AdminLogin/>}/>
-        <Route path="/dashboard" element={<AdminDashboard/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/wifi" element={<Wifi />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/gallery" element={<GuestGallery />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );
