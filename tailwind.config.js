@@ -4,10 +4,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        sand: "#F1E5D1",
-        sea: "#3A7CA5",
-        olive: "#A3B18A",
-        coral: "#D9825B",
+        sand: "#f5deb3",
+        sea: "#3ab0ff",
+        olive: "#708238",
+        coral: "#ff7f50",
         sunset: "#fd5e53"
       }
     }
