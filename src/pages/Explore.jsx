@@ -11,7 +11,7 @@ export default function Explore() {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const ADMIN_EMAIL = "youradmin@example.com"; // Replace with your admin email
+  const ADMIN_EMAIL = "stoneflowerhome@gmail.com"; // Replace with your admin email
 
   useEffect(() => {
     async function fetchExplore() {
