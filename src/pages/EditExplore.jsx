@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { db, storage } from "../firebase";
@@ -55,7 +56,7 @@ export default function EditExplore() {
         category,
         link,
         image: updatedImageUrl,
-        likes: 0, // keep or reset likes
+        likes: 0,
       });
 
       navigate("/explore");
@@ -80,7 +81,6 @@ export default function EditExplore() {
         onSubmit={handleSave}
         className="bg-white p-4 rounded-lg shadow-md"
       >
-        {/* Category */}
         <label className="block text-sm text-gray-600 mb-1">Category</label>
         <select
           value={category}
@@ -95,7 +95,6 @@ export default function EditExplore() {
           ))}
         </select>
 
-        {/* Title */}
         <label className="block text-sm text-gray-600 mb-1">Title</label>
         <input
           type="text"
@@ -105,7 +104,6 @@ export default function EditExplore() {
           className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
         />
 
-        {/* Description */}
         <label className="block text-sm text-gray-600 mb-1">Description</label>
         <textarea
           value={description}
@@ -115,7 +113,6 @@ export default function EditExplore() {
           rows="3"
         ></textarea>
 
-        {/* Link */}
         <label className="block text-sm text-gray-600 mb-1">Optional Link</label>
         <input
           type="url"
@@ -124,7 +121,6 @@ export default function EditExplore() {
           className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
         />
 
-        {/* Current Image */}
         {imageUrl && (
           <div className="mb-3">
             <img
@@ -135,7 +131,6 @@ export default function EditExplore() {
           </div>
         )}
 
-        {/* Replace Image */}
         <label className="block text-sm text-gray-600 mb-1">Replace Image</label>
         <input
           type="file"
@@ -144,7 +139,6 @@ export default function EditExplore() {
           className="w-full mb-3"
         />
 
-        {/* Buttons */}
         <div className="flex gap-2">
           <button
             type="submit"
