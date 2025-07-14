@@ -9,7 +9,6 @@ import GuestGallery from './pages/GuestGallery';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import PrivateRoute from './components/PrivateRoute';
-=======
 import Wifi from './pages/Wifi';
 import Explore from './pages/Explore';
 import EditExplore from './pages/EditExplore';
@@ -32,7 +31,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-=======
         <Route path="/wifi" element={<Wifi />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="/explore/edit/:id" element={<EditExplore />} />
