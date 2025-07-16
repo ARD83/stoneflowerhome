@@ -41,20 +41,29 @@ export default function Explore() {
     fetchItems();
   }, []);
 
-  async function handleLike(itemId) {
-    try {
-      const docRef = doc(db, "explore", itemId);
-      await updateDoc(docRef, {
-        likes: increment(1),
-      });
-      setItems((prev) =>
-        prev.map((item) =>
-          item.id === itemId ? { ...item, likes: item.likes + 1 } : item
-        )
-      );
-    } catch (error) {
-      console.error("Error liking item:", error);
+  function handleLike(itemId) {
+    // Check if guest already liked this item
+    const likedItems = JSON.parse(localStorage.getItem("likedItems")) || [];
+    if (likedItems.includes(itemId)) {
+      alert("You have already liked this item!");
+      return;
     }
+
+    // Save the item ID in localStorage
+    likedItems.push(itemId);
+    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+
+    // Update Firestore
+    const docRef = doc(db, "explore", itemId);
+    updateDoc(docRef, { likes: increment(1) })
+      .then(() => {
+        setItems((prev) =>
+          prev.map((item) =>
+            item.id === itemId ? { ...item, likes: item.likes + 1 } : item
+          )
+        );
+      })
+      .catch((err) => console.error("Error liking item:", err));
   }
 
   return (
