@@ -1,17 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { db, storage } from "../firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import imageCompression from "browser-image-compression";
-import { useNavigate } from "react-router-dom";
 
 export default function AddExplore() {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Beaches");
   const [link, setLink] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const navigate = useNavigate();
 
   const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
@@ -19,19 +19,17 @@ export default function AddExplore() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // File type check
     const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
       alert("Invalid file type. Please upload JPG, PNG, or WebP.");
       return;
     }
 
-    // File size check
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+    if (file.size > 5 * 1024 * 1024) {
       alert("Image too large. Compressing it for upload...");
       try {
         const compressedFile = await imageCompression(file, {
-          maxSizeMB: 5, // Compress to ~1.5MB
+          maxSizeMB: 4.5,
           maxWidthOrHeight: 1920,
           useWebWorker: true,
         });
@@ -46,15 +44,13 @@ export default function AddExplore() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!imageFile) {
-      alert("Please select an image.");
-      return;
-    }
-
     try {
-      const imageRef = ref(storage, `explore/${imageFile.name}`);
-      await uploadBytes(imageRef, imageFile);
-      const imageUrl = await getDownloadURL(imageRef);
+      let imageUrl = "";
+      if (imageFile) {
+        const imageRef = ref(storage, `explore/${imageFile.name}`);
+        await uploadBytes(imageRef, imageFile);
+        imageUrl = await getDownloadURL(imageRef);
+      }
 
       await addDoc(collection(db, "explore"), {
         title,
@@ -63,11 +59,12 @@ export default function AddExplore() {
         link,
         image: imageUrl,
         likes: 0,
+        date: new Date(), // 🆕 Save current date
       });
 
       navigate("/explore");
     } catch (error) {
-      console.error("Error adding document:", error);
+      console.error("Error adding explore item:", error);
     }
   };
 
@@ -125,7 +122,7 @@ export default function AddExplore() {
           type="submit"
           className="w-full bg-sea text-white p-2 rounded hover:bg-sunset"
         >
-          Add Item
+          Save
         </button>
       </form>
     </div>
