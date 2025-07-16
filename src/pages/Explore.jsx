@@ -31,7 +31,6 @@ function formatDate(timestamp) {
 export default function Explore() {
   const [items, setItems] = useState([]);
   const [filteredCategory, setFilteredCategory] = useState("All");
-  const [sortBy, setSortBy] = useState("likes"); // 🆕 Default sorting
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -43,6 +42,15 @@ export default function Explore() {
           id: doc.id,
           ...doc.data(),
         }));
+
+        // ✅ Sort by likes desc, then date desc
+        data.sort((a, b) => {
+          if (b.likes !== a.likes) return b.likes - a.likes;
+          const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+          const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+          return dateB - dateA;
+        });
+
         setItems(data);
       } catch (error) {
         console.error("Error fetching explore items:", error);
@@ -69,29 +77,21 @@ export default function Explore() {
             .map((item) =>
               item.id === itemId ? { ...item, likes: item.likes + 1 } : item
             )
+            .sort((a, b) => {
+              if (b.likes !== a.likes) return b.likes - a.likes;
+              const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+              const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+              return dateB - dateA;
+            })
         );
       })
       .catch((err) => console.error("Error liking item:", err));
   }
 
-  const sortedItems = [...items].sort((a, b) => {
-    if (sortBy === "likes") {
-      if (b.likes !== a.likes) return b.likes - a.likes;
-      const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-      const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-      return dateB - dateA; // Secondary: newest first
-    } else if (sortBy === "date") {
-      const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-      const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-      return dateB - dateA;
-    }
-    return 0;
-  });
-
   const filteredItems =
     filteredCategory === "All"
-      ? sortedItems
-      : sortedItems.filter((item) => item.category === filteredCategory);
+      ? items
+      : items.filter((item) => item.category === filteredCategory);
 
   const categories = ["All", "Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
@@ -115,36 +115,21 @@ export default function Explore() {
         </div>
       )}
 
-      {/* Category Filter & Sort Dropdown */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-3">
-        {/* Category Buttons */}
-        <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilteredCategory(cat)}
-              className={`px-3 py-1 rounded-full border ${
-                filteredCategory === cat
-                  ? "bg-sea text-white border-sea"
-                  : "bg-white text-sea border-sea"
-              } hover:bg-sea hover:text-white transition-colors`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Sort Dropdown */}
-        <div className="flex justify-center md:justify-end">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="border border-olive rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-sea"
+      {/* Category Filter */}
+      <div className="flex justify-center mb-6 gap-2 flex-wrap">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setFilteredCategory(cat)}
+            className={`px-3 py-1 rounded-full border ${
+              filteredCategory === cat
+                ? "bg-sea text-white border-sea"
+                : "bg-white text-sea border-sea"
+            } hover:bg-sea hover:text-white transition-colors`}
           >
-            <option value="likes">Sort by Likes</option>
-            <option value="date">Sort by Date (Newest)</option>
-          </select>
-        </div>
+            {cat}
+          </button>
+        ))}
       </div>
 
       {/* Grid of Explore cards */}
