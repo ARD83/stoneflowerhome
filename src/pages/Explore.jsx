@@ -23,7 +23,7 @@ function formatDate(timestamp) {
   if (!timestamp) return "";
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
   return `${day}.${month}.${year}`;
 }
@@ -43,8 +43,15 @@ export default function Explore() {
           ...doc.data(),
         }));
 
-        // 🔥 Sort items by likes descending
-        data.sort((a, b) => b.likes - a.likes);
+        // 🆕 Sort first by likes (desc), then by date (desc)
+        data.sort((a, b) => {
+          if (b.likes !== a.likes) {
+            return b.likes - a.likes; // Primary: likes desc
+          }
+          const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+          const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+          return dateB - dateA; // Secondary: date desc
+        });
 
         setItems(data);
       } catch (error) {
@@ -72,8 +79,14 @@ export default function Explore() {
             .map((item) =>
               item.id === itemId ? { ...item, likes: item.likes + 1 } : item
             )
-            // Re-sort after like
-            .sort((a, b) => b.likes - a.likes)
+            .sort((a, b) => {
+              if (b.likes !== a.likes) {
+                return b.likes - a.likes;
+              }
+              const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+              const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+              return dateB - dateA;
+            })
         );
       })
       .catch((err) => console.error("Error liking item:", err));
