@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,22 @@ export default function Explore() {
     fetchItems();
   }, []);
 
+  async function handleLike(itemId) {
+    try {
+      const docRef = doc(db, "explore", itemId);
+      await updateDoc(docRef, {
+        likes: increment(1),
+      });
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === itemId ? { ...item, likes: item.likes + 1 } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error liking item:", error);
+    }
+  }
+
   return (
     <div className="mt-20 p-4">
       <h1 className="text-2xl font-bold text-sea mb-4 text-center">Explore</h1>
@@ -46,15 +62,25 @@ export default function Explore() {
         {items.map((item) => (
           <div
             key={item.id}
-            className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between"
+            className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between relative"
           >
+            {/* Category Badge */}
+            <div className="absolute top-2 left-2 bg-coral text-white px-2 py-1 text-xs rounded-full shadow">
+              {item.category}
+            </div>
+
+            {/* Image */}
             <img
               src={item.image}
               alt={item.title}
               className="rounded-lg mb-3 object-cover h-48 w-full"
             />
+
+            {/* Title & Description */}
             <h2 className="text-xl font-semibold text-sea">{item.title}</h2>
             <p className="text-gray-700 mb-2">{item.description}</p>
+
+            {/* Optional link */}
             {item.link && (
               <a
                 href={item.link}
@@ -65,6 +91,17 @@ export default function Explore() {
                 Visit
               </a>
             )}
+
+            {/* Like Button */}
+            <div className="flex items-center gap-2 mt-2">
+              <button
+                onClick={() => handleLike(item.id)}
+                className="flex items-center gap-1 text-red-500 hover:text-red-700"
+              >
+                ❤️
+              </button>
+              <span className="text-gray-600 text-sm">{item.likes} likes</span>
+            </div>
 
             {/* Edit button (Admin only) */}
             {currentUser?.email === "stoneflowerhome@gmail.com" && (
