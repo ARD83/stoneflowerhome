@@ -33,6 +33,10 @@ export default function Explore() {
           id: doc.id,
           ...doc.data(),
         }));
+
+        // 🔥 Sort items by likes descending
+        data.sort((a, b) => b.likes - a.likes);
+
         setItems(data);
       } catch (error) {
         console.error("Error fetching explore items:", error);
@@ -55,9 +59,12 @@ export default function Explore() {
     updateDoc(docRef, { likes: increment(1) })
       .then(() => {
         setItems((prev) =>
-          prev.map((item) =>
-            item.id === itemId ? { ...item, likes: item.likes + 1 } : item
-          )
+          prev
+            .map((item) =>
+              item.id === itemId ? { ...item, likes: item.likes + 1 } : item
+            )
+            // Re-sort after like
+            .sort((a, b) => b.likes - a.likes)
         );
       })
       .catch((err) => console.error("Error liking item:", err));
@@ -72,7 +79,11 @@ export default function Explore() {
 
   return (
     <div className="mt-20 p-4">
-      <h1 className="text-2xl font-bold text-sea mb-4 text-center">Explore</h1>
+      <h1 className="text-2xl font-bold text-sea mb-2 text-center">Explore</h1>
+      <p className="text-center text-gray-600 mb-6">
+        Discover our favorite spots in Sardinia, from hidden beaches to lively restaurants and tours. 
+        Filter by category or vote for the places you loved the most!
+      </p>
 
       {/* Add Explore button (Admin only) */}
       {currentUser?.email === "stoneflowerhome@gmail.com" && (
