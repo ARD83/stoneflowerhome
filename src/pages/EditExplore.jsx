@@ -3,13 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { db, storage } from "../firebase";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import imageCompression from "browser-image-compression";
 
 export default function EditExplore() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Beaches");
   const [link, setLink] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -38,7 +39,36 @@ export default function EditExplore() {
     fetchItem();
   }, [id]);
 
-  async function handleSave(e) {
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // File type check
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      alert("Invalid file type. Please upload JPG, PNG, or WebP.");
+      return;
+    }
+
+    // File size check
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image too large. Compressing it for upload...");
+      try {
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 5,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        });
+        setImageFile(compressedFile);
+      } catch (error) {
+        console.error("Image compression failed:", error);
+      }
+    } else {
+      setImageFile(file);
+    }
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
     let updatedImageUrl = imageUrl;
 
@@ -55,23 +85,23 @@ export default function EditExplore() {
         category,
         link,
         image: updatedImageUrl,
-        likes: 0
+        likes: 0, // reset likes on update
       });
 
       navigate("/explore");
     } catch (error) {
       console.error("Error saving changes:", error);
     }
-  }
+  };
 
-  async function handleDelete() {
+  const handleDelete = async () => {
     try {
       await deleteDoc(doc(db, "explore", id));
       navigate("/explore");
     } catch (error) {
       console.error("Error deleting item:", error);
     }
-  }
+  };
 
   return (
     <div className="p-4 max-w-lg mx-auto mt-20">
@@ -124,8 +154,8 @@ export default function EditExplore() {
         <label className="block text-sm text-gray-600 mb-1">Replace Image</label>
         <input
           type="file"
-          accept="image/*"
-          onChange={(e) => setImageFile(e.target.files[0])}
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleFileChange}
           className="w-full mb-3"
         />
 
