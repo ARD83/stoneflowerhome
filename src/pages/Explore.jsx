@@ -19,6 +19,15 @@ function getBadgeColor(category) {
   }
 }
 
+function formatDate(timestamp) {
+  if (!timestamp) return "";
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const year = date.getFullYear();
+  return `${day}.${month}.${year}`;
+}
+
 export default function Explore() {
   const [items, setItems] = useState([]);
   const [filteredCategory, setFilteredCategory] = useState("All");
@@ -135,8 +144,15 @@ export default function Explore() {
               className="rounded-lg mb-3 object-cover h-48 w-full"
             />
 
-            {/* Title & Description */}
+            {/* Title */}
             <h2 className="text-xl font-semibold text-sea">{item.title}</h2>
+
+            {/* Date */}
+            <p className="text-sm text-gray-500 mb-2">
+              Added on: {formatDate(item.date)}
+            </p>
+
+            {/* Description */}
             <p className="text-gray-700 mb-2">{item.description}</p>
 
             {/* Optional link */}
