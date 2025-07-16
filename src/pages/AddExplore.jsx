@@ -31,7 +31,7 @@ export default function AddExplore() {
       alert("Image too large. Compressing it for upload...");
       try {
         const compressedFile = await imageCompression(file, {
-          maxSizeMB: 1.5, // Compress to ~1.5MB
+          maxSizeMB: 5, // Compress to ~1.5MB
           maxWidthOrHeight: 1920,
           useWebWorker: true,
         });
