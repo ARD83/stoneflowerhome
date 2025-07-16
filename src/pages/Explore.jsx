@@ -4,7 +4,6 @@ import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-// 🎨 Function to assign badge colors based on category
 function getBadgeColor(category) {
   switch (category) {
     case "Beaches":
@@ -22,6 +21,7 @@ function getBadgeColor(category) {
 
 export default function Explore() {
   const [items, setItems] = useState([]);
+  const [filteredCategory, setFilteredCategory] = useState("All");
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -42,18 +42,15 @@ export default function Explore() {
   }, []);
 
   function handleLike(itemId) {
-    // Check if guest already liked this item
     const likedItems = JSON.parse(localStorage.getItem("likedItems")) || [];
     if (likedItems.includes(itemId)) {
       alert("You have already liked this item!");
       return;
     }
 
-    // Save the item ID in localStorage
     likedItems.push(itemId);
     localStorage.setItem("likedItems", JSON.stringify(likedItems));
 
-    // Update Firestore
     const docRef = doc(db, "explore", itemId);
     updateDoc(docRef, { likes: increment(1) })
       .then(() => {
@@ -65,6 +62,13 @@ export default function Explore() {
       })
       .catch((err) => console.error("Error liking item:", err));
   }
+
+  const filteredItems =
+    filteredCategory === "All"
+      ? items
+      : items.filter((item) => item.category === filteredCategory);
+
+  const categories = ["All", "Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
   return (
     <div className="mt-20 p-4">
@@ -82,9 +86,26 @@ export default function Explore() {
         </div>
       )}
 
+      {/* Category Filter */}
+      <div className="flex justify-center mb-6 gap-2 flex-wrap">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setFilteredCategory(cat)}
+            className={`px-3 py-1 rounded-full border ${
+              filteredCategory === cat
+                ? "bg-sea text-white border-sea"
+                : "bg-white text-sea border-sea"
+            } hover:bg-sea hover:text-white transition-colors`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {/* Grid of Explore cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between relative"
