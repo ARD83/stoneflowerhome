@@ -14,6 +14,7 @@ export default function EditExplore() {
   const [link, setLink] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [likes, setLikes] = useState(0);
 
   const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
@@ -29,6 +30,7 @@ export default function EditExplore() {
           setCategory(data.category);
           setLink(data.link);
           setImageUrl(data.image || "");
+          setLikes(data.likes || 0);
         } else {
           console.error("Item not found");
         }
@@ -43,19 +45,17 @@ export default function EditExplore() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // File type check
     const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
       alert("Invalid file type. Please upload JPG, PNG, or WebP.");
       return;
     }
 
-    // File size check
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 5 * 1024 * 1024) {
       alert("Image too large. Compressing it for upload...");
       try {
         const compressedFile = await imageCompression(file, {
-          maxSizeMB: 5,
+          maxSizeMB: 4.5,
           maxWidthOrHeight: 1920,
           useWebWorker: true,
         });
@@ -85,7 +85,8 @@ export default function EditExplore() {
         category,
         link,
         image: updatedImageUrl,
-        likes: 0, // reset likes on update
+        likes,
+        date: new Date(), // 🆕 update date on edit
       });
 
       navigate("/explore");
