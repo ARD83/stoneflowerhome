@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { db, storage } from "../firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import imageCompression from "browser-image-compression";
 import { useNavigate } from "react-router-dom";
 
 export default function AddExplore() {
@@ -13,6 +14,35 @@ export default function AddExplore() {
   const navigate = useNavigate();
 
   const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // File type check
+    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      alert("Invalid file type. Please upload JPG, PNG, or WebP.");
+      return;
+    }
+
+    // File size check
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+      alert("Image too large. Compressing it for upload...");
+      try {
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 1.5, // Compress to ~1.5MB
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        });
+        setImageFile(compressedFile);
+      } catch (error) {
+        console.error("Image compression failed:", error);
+      }
+    } else {
+      setImageFile(file);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -86,8 +116,8 @@ export default function AddExplore() {
         <label className="block text-sm text-gray-600 mb-1">Upload Image</label>
         <input
           type="file"
-          accept="image/*"
-          onChange={(e) => setImageFile(e.target.files[0])}
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleFileChange}
           className="w-full mb-3"
         />
 
