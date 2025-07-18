@@ -5,7 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 // Background image URL
-const backgroundImageUrl = "/images/explore-bg.jpg"; // Add your image to public/images
+const backgroundImageUrl = "/assets/explore_background.png"; // Add your image to public/images
 
 function getBadgeColor(category) {
   switch (category) {
