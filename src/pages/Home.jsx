@@ -24,13 +24,6 @@ export default function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md">
           <button
-            onClick={() => navigate("/wifi")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">📶</span>
-            <span className="mt-2 text-lg font-medium text-sea">Wi-Fi</span>
-          </button>
-          <button
             onClick={() => navigate("/explore")}
             className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
           >
@@ -44,6 +37,13 @@ export default function Home() {
             <span className="text-4xl">📸</span>
             <span className="mt-2 text-lg font-medium text-sea">Guest Gallery</span>
           </button>
+          <button
+            onClick={() => navigate("/wifi")}
+            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
+          >
+            <span className="text-4xl">📶</span>
+            <span className="mt-2 text-lg font-medium text-sea">Wi-Fi</span>
+          </button>      
           <button
             onClick={() => navigate("/admin")}
             className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
