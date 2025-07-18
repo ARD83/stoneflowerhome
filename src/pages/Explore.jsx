@@ -105,7 +105,7 @@ export default function Explore() {
   }
 
   return (
-    <div className="mt-20 p-4 relative">
+    <div className="mt-20 p-4">
       {/* 🌊 Homepage-style Heading */}
       <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
         Explore Sardinia
@@ -114,25 +114,24 @@ export default function Explore() {
         Discover stunning beaches, delicious food, and hidden gems shared by guests.
       </p>
 
-      {/* Admin Add Button */}
-      {currentUser?.email === "stoneflowerhome@gmail.com" && (
-        <div className="flex justify-center mb-6">
+      {/* Filter & Add Button Row */}
+      <div className="sticky top-16 z-40 bg-white p-2 rounded-lg shadow flex justify-between items-center mb-6">
+        <button
+          onClick={() => setShowFilterPanel(true)}
+          className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
+        >
+          🛠 Filter & Sort
+        </button>
+
+        {currentUser?.email === "stoneflowerhome@gmail.com" && (
           <button
             onClick={() => navigate("/explore/add")}
-            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition"
+            className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
           >
             ➕ Add Explore
           </button>
-        </div>
-      )}
-
-      {/* Floating Filter & Sort Button */}
-      <button
-        onClick={() => setShowFilterPanel(true)}
-        className="fixed bottom-6 right-6 bg-sea text-white p-3 rounded-full shadow-lg hover:bg-sunset transition z-50"
-      >
-        🛠 Filter & Sort
-      </button>
+        )}
+      </div>
 
       {/* Filter & Sort Panel */}
       {showFilterPanel && (
