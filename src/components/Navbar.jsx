@@ -6,6 +6,7 @@ const Navbar = forwardRef((props, ref) => {
   const location = useLocation();
 
   const navLinks = [
+    { name: "Home", path: "/home" },
     { name: "Wifi", path: "/wifi" },
     { name: "Explore", path: "/explore" },
     { name: "Guest Gallery", path: "/gallery" },
@@ -14,7 +15,7 @@ const Navbar = forwardRef((props, ref) => {
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 w-full bg-white shadow-md z-50 flex justify-between items-center px-4 py-3"
+      className="fixed top-0 left-0 w-full bg-sea shadow-md z-50 flex justify-between items-center px-4 py-3"
     >
       {/* Left: Hamburger */}
       <button
