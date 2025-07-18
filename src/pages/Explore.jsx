@@ -7,15 +7,15 @@ import { useNavigate } from "react-router-dom";
 function getBadgeColor(category) {
   switch (category) {
     case "Beaches":
-      return "bg-sky-500 text-white";
+      return "bg-sky-400 text-white";
     case "Restaurants & Bars":
-      return "bg-green-500 text-white";
+      return "bg-green-400 text-white";
     case "Tours":
       return "bg-orange-400 text-white";
     case "Shops":
-      return "bg-purple-500 text-white";
+      return "bg-purple-400 text-white";
     default:
-      return "bg-gray-400 text-white";
+      return "bg-gray-300 text-white";
   }
 }
 
@@ -105,162 +105,166 @@ export default function Explore() {
   }
 
   return (
-    <div className="mt-20 p-4">
-      {/* 🌊 Homepage-style Heading */}
-      <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
-        Explore Sardinia
-      </h1>
-      <p className="text-lg text-sea text-center mb-4 max-w-2xl mx-auto">
-        Discover stunning beaches, delicious food, and hidden gems shared by guests.
-      </p>
-
-      {/* Filter & Add Button Row */}
-      <div className="sticky top-16 z-40 bg-white p-2 rounded-lg shadow flex justify-between items-center mb-6">
-        <button
-          onClick={() => setShowFilterPanel(true)}
-          className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
-        >
-          🛠 Filter & Sort
-        </button>
-
-        {currentUser?.email === "stoneflowerhome@gmail.com" && (
-          <button
-            onClick={() => navigate("/explore/add")}
-            className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
-          >
-            ➕ Add Explore
-          </button>
-        )}
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-white">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-sky-300 to-teal-200 text-center py-12">
+        <h1 className="text-5xl font-bold text-sea drop-shadow-lg">
+          Explore Sardinia
+        </h1>
+        <p className="text-lg text-sea mt-2 max-w-xl mx-auto">
+          Find breathtaking beaches, hidden gems, and guest-recommended spots.
+        </p>
       </div>
 
-      {/* Filter & Sort Panel */}
-      {showFilterPanel && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
-            <h2 className="text-xl font-bold text-sea mb-4">Filter & Sort</h2>
-
-            {/* Categories */}
-            <div className="mb-4">
-              <h3 className="font-semibold mb-2">Categories</h3>
-              {categories.map((cat) => (
-                <div key={cat} className="flex items-center mb-1">
-                  <input
-                    type="checkbox"
-                    id={cat}
-                    checked={filteredCategories.includes(cat)}
-                    onChange={() =>
-                      setFilteredCategories((prev) =>
-                        prev.includes(cat)
-                          ? prev.filter((c) => c !== cat)
-                          : [...prev, cat]
-                      )
-                    }
-                    className="mr-2"
-                  />
-                  <label htmlFor={cat}>{cat}</label>
-                </div>
-              ))}
-            </div>
-
-            {/* Sort By */}
-            <div className="mb-4">
-              <h3 className="font-semibold mb-2">Sort By</h3>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="border rounded px-3 py-1 w-full"
-              >
-                <option value="likes">Most Likes</option>
-                <option value="date">Newest First</option>
-              </select>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={clearAllFilters}
-                className="text-red-500 hover:underline"
-              >
-                Clear All
-              </button>
-              <button
-                onClick={applyFilterSort}
-                className="bg-sea text-white px-4 py-1 rounded hover:bg-sunset transition"
-              >
-                Apply
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Grid of cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1 relative"
+      <div className="p-4">
+        {/* Filter & Add Button Row */}
+        <div className="sticky top-16 z-40 bg-white/70 backdrop-blur rounded-full shadow px-4 py-2 flex justify-between items-center mb-6">
+          <button
+            onClick={() => setShowFilterPanel(true)}
+            className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
           >
-            {/* Category Badge */}
-            <div
-              className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
-                item.category
-              )}`}
+            🛠 Filter & Sort
+          </button>
+
+          {currentUser?.email === "stoneflowerhome@gmail.com" && (
+            <button
+              onClick={() => navigate("/explore/add")}
+              className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
             >
-              {item.category}
-            </div>
+              ➕ Add Explore
+            </button>
+          )}
+        </div>
 
-            {/* Image */}
-            <img
-              src={item.image || "/placeholder.jpg"}
-              alt={item.title}
-              className="w-full h-56 object-cover"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "/placeholder.jpg";
-              }}
-            />
+        {/* Filter & Sort Panel */}
+        {showFilterPanel && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
+              <h2 className="text-xl font-bold text-sea mb-4">Filter & Sort</h2>
 
-            {/* Content */}
-            <div className="p-4 flex flex-col justify-between">
-              <h2 className="text-xl font-bold text-sea">{item.title}</h2>
-              <p className="text-gray-700 mt-1">{item.description}</p>
+              {/* Categories */}
+              <div className="mb-4">
+                <h3 className="font-semibold mb-2">Categories</h3>
+                {categories.map((cat) => (
+                  <div key={cat} className="flex items-center mb-1">
+                    <input
+                      type="checkbox"
+                      id={cat}
+                      checked={filteredCategories.includes(cat)}
+                      onChange={() =>
+                        setFilteredCategories((prev) =>
+                          prev.includes(cat)
+                            ? prev.filter((c) => c !== cat)
+                            : [...prev, cat]
+                        )
+                      }
+                      className="mr-2"
+                    />
+                    <label htmlFor={cat}>{cat}</label>
+                  </div>
+                ))}
+              </div>
 
-              {item.link && (
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sea underline mt-2"
+              {/* Sort By */}
+              <div className="mb-4">
+                <h3 className="font-semibold mb-2">Sort By</h3>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="border rounded px-3 py-1 w-full"
                 >
-                  Visit
-                </a>
-              )}
+                  <option value="likes">Most Likes</option>
+                  <option value="date">Newest First</option>
+                </select>
+              </div>
 
-              <div className="flex items-center justify-between mt-3">
-                <span className="text-sm text-gray-500">
-                  Added: {formatDate(item.date)}
-                </span>
+              {/* Buttons */}
+              <div className="flex justify-between mt-4">
                 <button
-                  onClick={() => handleLike(item.id)}
-                  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
+                  onClick={clearAllFilters}
+                  className="text-red-500 hover:underline"
                 >
-                  ❤️ <span>{item.likes}</span>
+                  Clear All
+                </button>
+                <button
+                  onClick={applyFilterSort}
+                  className="bg-sea text-white px-4 py-1 rounded hover:bg-sunset transition"
+                >
+                  Apply
                 </button>
               </div>
             </div>
-
-            {/* Admin Edit Button */}
-            {currentUser?.email === "stoneflowerhome@gmail.com" && (
-              <button
-                onClick={() => navigate(`/explore/edit/${item.id}`)}
-                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-              >
-                ✏️ Edit
-              </button>
-            )}
           </div>
-        ))}
+        )}
+
+        {/* Grid of cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredItems.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 relative"
+            >
+              {/* Category Badge */}
+              <div
+                className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
+                  item.category
+                )}`}
+              >
+                {item.category}
+              </div>
+
+              {/* Image */}
+              <img
+                src={item.image || "/placeholder.jpg"}
+                alt={item.title}
+                className="w-full h-56 object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/placeholder.jpg";
+                }}
+              />
+
+              {/* Content */}
+              <div className="p-4 flex flex-col justify-between">
+                <h2 className="text-xl font-bold text-sea">{item.title}</h2>
+                <p className="text-gray-700 mt-1">{item.description}</p>
+
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sea underline mt-2"
+                  >
+                    Visit
+                  </a>
+                )}
+
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-sm text-gray-500">
+                    Added: {formatDate(item.date)}
+                  </span>
+                  <button
+                    onClick={() => handleLike(item.id)}
+                    className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
+                  >
+                    ❤️ <span>{item.likes}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Admin Edit Button */}
+              {currentUser?.email === "stoneflowerhome@gmail.com" && (
+                <button
+                  onClick={() => navigate(`/explore/edit/${item.id}`)}
+                  className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                >
+                  ✏️ Edit
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
