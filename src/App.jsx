@@ -14,8 +14,9 @@ import Home from "./pages/Home";
 export default function App() {
   return (
     <Router>
-      <Navbar />
-      <div className="pt-20"> {/* Padding for fixed navbar */}
+    {/* ✅ Show Navbar only if not on homepage */}
+    {location.pathname !== "/" && <Navbar />}
+        
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
