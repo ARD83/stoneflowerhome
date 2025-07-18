@@ -105,7 +105,7 @@ export default function Explore() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative pt-20" // Fix navbar overlap
+      className="min-h-screen bg-cover bg-center relative pt-20" // ✅ Fix navbar overlap
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}
@@ -140,7 +140,7 @@ export default function Explore() {
                   <select
                     value={filteredCategory}
                     onChange={(e) => setFilteredCategory(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-white" // ✅ Ensure dark text
                   >
                     <option value="">All Categories</option>
                     {categories.map((cat) => (
@@ -155,7 +155,7 @@ export default function Explore() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-white" // ✅ Ensure dark text
                   >
                     <option value="likes">Most Likes</option>
                     <option value="date">Newest First</option>
