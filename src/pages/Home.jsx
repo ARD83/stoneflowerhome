@@ -1,44 +1,52 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/beach-background.png"; // ✅ Add the background image
 
 export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sky-50 flex flex-col items-center justify-center p-6">
-      {/* Hero Section */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-sea mb-2">Welcome to StoneFlowerHome</h1>
-        <p className="text-gray-700 max-w-md mx-auto">
-          Your Sardinian retreat awaits. Explore the best beaches, restaurants, and attractions curated just for you.
-        </p>
+    <div
+      className="min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+      }}
+    >
+      {/* Welcome Heading */}
+      <div className="text-center text-white mb-10 drop-shadow-lg">
+        <h1 className="text-5xl font-bold mb-2">Welcome</h1>
+        <p className="text-xl">Manage your vacation home</p>
       </div>
 
-      {/* Navigation Buttons */}
+      {/* Buttons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md">
         <button
           onClick={() => navigate("/wifi")}
-          className="bg-sea text-white py-3 rounded-lg shadow hover:bg-sunset transition"
+          className="flex flex-col items-center justify-center bg-white/80 rounded-xl p-6 shadow hover:bg-white transition"
         >
-          📶 WiFi
+          <span className="text-4xl">📶</span>
+          <span className="mt-2 text-lg font-medium text-sea">Wi-Fi</span>
         </button>
         <button
           onClick={() => navigate("/explore")}
-          className="bg-sea text-white py-3 rounded-lg shadow hover:bg-sunset transition"
+          className="flex flex-col items-center justify-center bg-white/80 rounded-xl p-6 shadow hover:bg-white transition"
         >
-          🌅 Explore
+          <span className="text-4xl">🌅</span>
+          <span className="mt-2 text-lg font-medium text-sea">Explore</span>
         </button>
         <button
           onClick={() => navigate("/gallery")}
-          className="bg-sea text-white py-3 rounded-lg shadow hover:bg-sunset transition"
+          className="flex flex-col items-center justify-center bg-white/80 rounded-xl p-6 shadow hover:bg-white transition"
         >
-          📸 Guest Gallery
+          <span className="text-4xl">📸</span>
+          <span className="mt-2 text-lg font-medium text-sea">Guest Gallery</span>
         </button>
         <button
           onClick={() => navigate("/admin")}
-          className="bg-sea text-white py-3 rounded-lg shadow hover:bg-sunset transition"
+          className="flex flex-col items-center justify-center bg-white/80 rounded-xl p-6 shadow hover:bg-white transition"
         >
-          🔑 Admin
+          <span className="text-4xl">🔑</span>
+          <span className="mt-2 text-lg font-medium text-sea">Admin</span>
         </button>
       </div>
     </div>
