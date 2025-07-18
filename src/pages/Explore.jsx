@@ -30,8 +30,13 @@ function formatDate(timestamp) {
 
 export default function Explore() {
   const [items, setItems] = useState([]);
+  const [filteredCategory, setFilteredCategory] = useState("");
+  const [sortBy, setSortBy] = useState("likes");
+  const [showFilter, setShowFilter] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+
+  const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
   useEffect(() => {
     async function fetchItems() {
@@ -69,6 +74,22 @@ export default function Explore() {
     });
   }
 
+  let displayedItems = [...items];
+
+  if (filteredCategory) {
+    displayedItems = displayedItems.filter((item) => item.category === filteredCategory);
+  }
+
+  if (sortBy === "likes") {
+    displayedItems.sort((a, b) => b.likes - a.likes);
+  } else if (sortBy === "date") {
+    displayedItems.sort((a, b) => {
+      const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+      const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+      return dateB - dateA;
+    });
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-100 to-white">
       {/* Hero Section */}
@@ -81,19 +102,64 @@ export default function Explore() {
         </p>
 
         {/* Filter & Add Buttons */}
-        <div className="flex justify-center mt-6 gap-4 flex-wrap">
+        <div className="flex justify-center mt-6 gap-4 flex-wrap relative">
+          {/* Filter Button */}
           <button
+            onClick={() => setShowFilter(!showFilter)}
             className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
           >
-            <span>☰</span> Filter & Sort
+            ☰ Filter & Sort
           </button>
 
+          {/* Filter Dropdown */}
+          {showFilter && (
+            <div className="absolute top-16 bg-white rounded-xl shadow-lg p-4 w-64 z-10">
+              <div className="mb-3">
+                <label className="block text-gray-600 mb-1">Category:</label>
+                <select
+                  value={filteredCategory}
+                  onChange={(e) => setFilteredCategory(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="block text-gray-600 mb-1">Sort By:</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                >
+                  <option value="likes">Most Likes</option>
+                  <option value="date">Newest First</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  setFilteredCategory("");
+                  setSortBy("likes");
+                  setShowFilter(false);
+                }}
+                className="mt-2 w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+
+          {/* Add Button (Admin only) */}
           {currentUser?.email === "stoneflowerhome@gmail.com" && (
             <button
               onClick={() => navigate("/explore/add")}
               className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
             >
-              <span>➕</span> Add Explore
+              ➕ Add Explore
             </button>
           )}
         </div>
@@ -101,7 +167,7 @@ export default function Explore() {
 
       {/* Cards */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-4 py-8">
-        {items.map((item) => (
+        {displayedItems.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative"
@@ -153,17 +219,17 @@ export default function Explore() {
                   ❤️ <span>{item.likes}</span>
                 </button>
               </div>
-            </div>
 
-            {/* Admin Edit Button */}
-            {currentUser?.email === "stoneflowerhome@gmail.com" && (
-              <button
-                onClick={() => navigate(`/explore/edit/${item.id}`)}
-                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-              >
-                ✏️ Edit
-              </button>
-            )}
+              {/* Admin Edit */}
+              {currentUser?.email === "stoneflowerhome@gmail.com" && (
+                <button
+                  onClick={() => navigate(`/explore/edit/${item.id}`)}
+                  className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                >
+                  ✏️ Edit
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
