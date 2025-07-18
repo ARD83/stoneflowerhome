@@ -1,34 +1,54 @@
-import React, { forwardRef } from "react";
-import { Link } from "react-router-dom";
+import React, { forwardRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, User } from "lucide-react"; // Icons
 
 const Navbar = forwardRef((props, ref) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  const navLinks = [
+    { name: "Wifi", path: "/wifi" },
+    { name: "Explore", path: "/explore" },
+    { name: "Guest Gallery", path: "/gallery" },
+  ];
+
   return (
     <nav
       ref={ref}
-      className="fixed top-0 left-0 w-full bg-white shadow-md z-50"
+      className="fixed top-0 left-0 w-full bg-sea shadow-md z-50 flex justify-between items-center px-4 py-3"
     >
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo or Title */}
-        <Link to="/" className="text-2xl font-bold text-sea">
-          StoneFlowerHome
-        </Link>
+      {/* Left: Hamburger */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="text-gray-800 focus:outline-none"
+      >
+        {isOpen ? <X size={28} /> : <Menu size={28} />}
+      </button>
 
-        {/* Navigation Links */}
-        <div className="flex gap-6 text-gray-700 font-medium">
-          <Link to="/wifi" className="hover:text-sea transition">
-            Wifi
-          </Link>
-          <Link to="/explore" className="hover:text-sea transition">
-            Explore
-          </Link>
-          <Link to="/gallery" className="hover:text-sea transition">
-            Guest Gallery
-          </Link>
-          <Link to="/admin" className="hover:text-sea transition">
-            Admin
-          </Link>
+      {/* Right: Admin icon */}
+      <Link to="/admin" className="text-gray-800 hover:text-sea transition">
+        <User size={28} />
+      </Link>
+
+      {/* Sliding Menu */}
+      {isOpen && (
+        <div className="absolute top-16 left-0 w-64 bg-white shadow-lg rounded-r-lg p-4 z-40">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={() => setIsOpen(false)} // Close on click
+              className={`block py-2 px-3 rounded hover:bg-gray-100 ${
+                location.pathname === link.path
+                  ? "bg-sea text-white"
+                  : "text-gray-800"
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
-      </div>
+      )}
     </nav>
   );
 });
