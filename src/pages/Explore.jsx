@@ -3,7 +3,6 @@ import { collection, getDocs, doc, updateDoc, increment } from "firebase/firesto
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import bgImage from "../assets/beach-background.png"; // ✅ Add background image
 
 function getBadgeColor(category) {
   switch (category) {
@@ -31,9 +30,13 @@ function formatDate(timestamp) {
 
 export default function Explore() {
   const [items, setItems] = useState([]);
-  const [filteredCategory, setFilteredCategory] = useState("All");
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [sortBy, setSortBy] = useState("likes");
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+
+  const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
   useEffect(() => {
     async function fetchItems() {
@@ -43,15 +46,6 @@ export default function Explore() {
           id: doc.id,
           ...doc.data(),
         }));
-
-        // Sort by likes desc, then date desc
-        data.sort((a, b) => {
-          if (b.likes !== a.likes) return b.likes - a.likes;
-          const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-          const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-          return dateB - dateA;
-        });
-
         setItems(data);
       } catch (error) {
         console.error("Error fetching explore items:", error);
@@ -80,127 +74,194 @@ export default function Explore() {
     });
   }
 
-  const filteredItems =
-    filteredCategory === "All"
-      ? items
-      : items.filter((item) => item.category === filteredCategory);
+  function applyFilterSort() {
+    setShowFilterPanel(false);
+  }
 
-  const categories = ["All", "Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
+  function clearAllFilters() {
+    setFilteredCategories([]);
+    setSortBy("likes");
+    setShowFilterPanel(false);
+  }
+
+  let filteredItems = [...items];
+
+  // Filter by selected categories
+  if (filteredCategories.length > 0) {
+    filteredItems = filteredItems.filter((item) =>
+      filteredCategories.includes(item.category)
+    );
+  }
+
+  // Sort
+  if (sortBy === "likes") {
+    filteredItems.sort((a, b) => b.likes - a.likes);
+  } else if (sortBy === "date") {
+    filteredItems.sort((a, b) => {
+      const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
+      const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
+      return dateB - dateA;
+    });
+  }
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-      }}
-    >
-      <div className="bg-black/40 min-h-screen px-4 py-8">
-        {/* 🌊 Homepage-style Heading */}
-        <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3 text-center drop-shadow">
-          Explore Sardinia
-        </h1>
-        <p className="text-md sm:text-lg text-white text-center mb-6 max-w-2xl mx-auto drop-shadow">
-          Discover stunning beaches, delicious food, and hidden gems shared by guests.
-        </p>
+    <div className="mt-20 p-4 relative">
+      {/* 🌊 Homepage-style Heading */}
+      <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
+        Explore Sardinia
+      </h1>
+      <p className="text-lg text-sea text-center mb-4 max-w-2xl mx-auto">
+        Discover stunning beaches, delicious food, and hidden gems shared by guests.
+      </p>
 
-        {/* Top Bar: Filter & Add Button */}
-        <div className="relative flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          {/* Category Filter */}
-          <div className="flex overflow-x-auto gap-2 w-full sm:w-auto justify-center sm:justify-start">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilteredCategory(cat)}
-                className={`whitespace-nowrap px-3 py-1 rounded-full border text-sm font-medium transition ${
-                  filteredCategory === cat
-                    ? "bg-sea text-white border-sea shadow"
-                    : "border-sea text-sea hover:bg-sea hover:text-white"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Admin Add Button */}
-          {currentUser?.email === "stoneflowerhome@gmail.com" && (
-            <button
-              onClick={() => navigate("/explore/add")}
-              className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
-            >
-              ➕ Add New
-            </button>
-          )}
+      {/* Admin Add Button */}
+      {currentUser?.email === "stoneflowerhome@gmail.com" && (
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => navigate("/explore/add")}
+            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition"
+          >
+            ➕ Add Explore
+          </button>
         </div>
+      )}
 
-        {/* Grid of cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1 relative"
-            >
-              {/* Category Badge */}
-              <div
-                className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
-                  item.category
-                )}`}
-              >
-                {item.category}
-              </div>
+      {/* Floating Filter & Sort Button */}
+      <button
+        onClick={() => setShowFilterPanel(true)}
+        className="fixed bottom-6 right-6 bg-sea text-white p-3 rounded-full shadow-lg hover:bg-sunset transition z-50"
+      >
+        🛠 Filter & Sort
+      </button>
 
-              {/* Image */}
-              <img
-                src={item.image || "/placeholder.jpg"}
-                alt={item.title}
-                className="w-full h-56 object-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/placeholder.jpg";
-                }}
-              />
+      {/* Filter & Sort Panel */}
+      {showFilterPanel && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
+            <h2 className="text-xl font-bold text-sea mb-4">Filter & Sort</h2>
 
-              {/* Content */}
-              <div className="p-4 flex flex-col justify-between">
-                <h2 className="text-xl font-bold text-sea">{item.title}</h2>
-                <p className="text-gray-700 mt-1">{item.description}</p>
-
-                {item.link && (
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sea underline mt-2"
-                  >
-                    Visit
-                  </a>
-                )}
-
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-sm text-gray-500">
-                    Added: {formatDate(item.date)}
-                  </span>
-                  <button
-                    onClick={() => handleLike(item.id)}
-                    className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
-                  >
-                    ❤️ <span>{item.likes}</span>
-                  </button>
+            {/* Categories */}
+            <div className="mb-4">
+              <h3 className="font-semibold mb-2">Categories</h3>
+              {categories.map((cat) => (
+                <div key={cat} className="flex items-center mb-1">
+                  <input
+                    type="checkbox"
+                    id={cat}
+                    checked={filteredCategories.includes(cat)}
+                    onChange={() =>
+                      setFilteredCategories((prev) =>
+                        prev.includes(cat)
+                          ? prev.filter((c) => c !== cat)
+                          : [...prev, cat]
+                      )
+                    }
+                    className="mr-2"
+                  />
+                  <label htmlFor={cat}>{cat}</label>
                 </div>
-              </div>
-
-              {/* Admin Edit Button */}
-              {currentUser?.email === "stoneflowerhome@gmail.com" && (
-                <button
-                  onClick={() => navigate(`/explore/edit/${item.id}`)}
-                  className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-                >
-                  ✏️ Edit
-                </button>
-              )}
+              ))}
             </div>
-          ))}
+
+            {/* Sort By */}
+            <div className="mb-4">
+              <h3 className="font-semibold mb-2">Sort By</h3>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="border rounded px-3 py-1 w-full"
+              >
+                <option value="likes">Most Likes</option>
+                <option value="date">Newest First</option>
+              </select>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={clearAllFilters}
+                className="text-red-500 hover:underline"
+              >
+                Clear All
+              </button>
+              <button
+                onClick={applyFilterSort}
+                className="bg-sea text-white px-4 py-1 rounded hover:bg-sunset transition"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* Grid of cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {filteredItems.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1 relative"
+          >
+            {/* Category Badge */}
+            <div
+              className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
+                item.category
+              )}`}
+            >
+              {item.category}
+            </div>
+
+            {/* Image */}
+            <img
+              src={item.image || "/placeholder.jpg"}
+              alt={item.title}
+              className="w-full h-56 object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/placeholder.jpg";
+              }}
+            />
+
+            {/* Content */}
+            <div className="p-4 flex flex-col justify-between">
+              <h2 className="text-xl font-bold text-sea">{item.title}</h2>
+              <p className="text-gray-700 mt-1">{item.description}</p>
+
+              {item.link && (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sea underline mt-2"
+                >
+                  Visit
+                </a>
+              )}
+
+              <div className="flex items-center justify-between mt-3">
+                <span className="text-sm text-gray-500">
+                  Added: {formatDate(item.date)}
+                </span>
+                <button
+                  onClick={() => handleLike(item.id)}
+                  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
+                >
+                  ❤️ <span>{item.likes}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Admin Edit Button */}
+            {currentUser?.email === "stoneflowerhome@gmail.com" && (
+              <button
+                onClick={() => navigate(`/explore/edit/${item.id}`)}
+                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+              >
+                ✏️ Edit
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
