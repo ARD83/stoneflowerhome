@@ -213,11 +213,13 @@ export default function Explore() {
                   Added: {formatDate(item.date)}
                 </span>
 <button
-  onClick={() => handleLike(item.id)}
+  onClick={() => {
+    if (!currentUser) handleLike(item.id);
+    else alert("Admins cannot vote.");
+  }}
   className="flex items-center gap-1 text-red-600 hover:text-red-700 transition font-semibold"
 >
-  <span role="img" aria-label="like">❤️</span>
-  <span>{item.likes !== undefined && item.likes !== null ? item.likes : 0}</span>
+  ❤️ <span>{item.likes ?? 0}</span>
 </button>
               </div>
 
