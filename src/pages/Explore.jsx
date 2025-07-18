@@ -3,7 +3,7 @@ import { collection, getDocs, doc, updateDoc, increment } from "firebase/firesto
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/explore-bg.jpg"; // <-- import your background image
+import backgroundImage from "../assets/explore-bg.jpg"; // Background image
 
 function getBadgeColor(category) {
   switch (category) {
@@ -43,10 +43,13 @@ export default function Explore() {
     async function fetchItems() {
       try {
         const querySnapshot = await getDocs(collection(db, "explore"));
-        const data = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const data = querySnapshot.docs.map((doc) => {
+          const item = doc.data();
+          if (item.likes === undefined || item.likes === null) {
+            item.likes = 0; // Ensure likes always exists
+          }
+          return { id: doc.id, ...item };
+        });
         setItems(data);
       } catch (error) {
         console.error("Error fetching explore items:", error);
@@ -56,6 +59,11 @@ export default function Explore() {
   }, []);
 
   function handleLike(itemId) {
+    if (currentUser) {
+      alert("Admins cannot vote.");
+      return;
+    }
+
     const likedItems = JSON.parse(localStorage.getItem("likedItems")) || [];
     if (likedItems.includes(itemId)) {
       alert("You’ve already liked this!");
