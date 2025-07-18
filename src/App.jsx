@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Wifi from "./pages/Wifi";
@@ -13,14 +13,22 @@ import Home from "./pages/Home";
 
 function Layout({ children }) {
   const location = useLocation();
+  const navbarRef = useRef(null);
+  const [navbarHeight, setNavbarHeight] = useState(0);
 
-  // ✅ Hide navbar on homepage (/), show it everywhere else
+  // ✅ Get dynamic navbar height
+  useEffect(() => {
+    if (navbarRef.current) {
+      setNavbarHeight(navbarRef.current.offsetHeight);
+    }
+  }, [location]);
+
   const hideNavbar = location.pathname === "/";
 
   return (
     <>
-      {!hideNavbar && <Navbar />}
-      <div className={!hideNavbar ? "pt-[100px]" : ""}>
+      {!hideNavbar && <Navbar ref={navbarRef} />}
+      <div style={{ paddingTop: !hideNavbar ? `${navbarHeight}px` : "0px" }}>
         {children}
       </div>
     </>
@@ -32,14 +40,11 @@ export default function App() {
     <Router>
       <Layout>
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/wifi" element={<Wifi />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/gallery" element={<GuestGallery />} />
           <Route path="/admin" element={<AdminLogin />} />
-
-          {/* Admin-only Routes */}
           <Route
             path="/explore/add"
             element={
