@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Wifi from "./pages/Wifi";
 import Explore from "./pages/Explore";
@@ -11,17 +11,12 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 
-function AppContent() {
-  const location = useLocation();
-
-  const isHome = location.pathname === "/";
-
+export default function App() {
   return (
-    <>
-      {/* ✅ Show Navbar only if NOT on Home */}
-      {!isHome && <Navbar />}
-
-      <div className={isHome ? "" : "pt-20"}>
+    <Router>
+      <Navbar />
+      {/* ✅ Add top padding globally for fixed Navbar */}
+      <div className="pt-[100px]"> 
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -57,14 +52,6 @@ function AppContent() {
           />
         </Routes>
       </div>
-    </>
-  );
-}
-
-export default function App() {
-  return (
-    <Router>
-      <AppContent />
     </Router>
   );
 }
