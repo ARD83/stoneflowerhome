@@ -30,9 +30,8 @@ function formatDate(timestamp) {
 
 export default function Explore() {
   const [items, setItems] = useState([]);
-  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [filteredCategory, setFilteredCategory] = useState("");
   const [sortBy, setSortBy] = useState("likes");
-  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -74,28 +73,18 @@ export default function Explore() {
     });
   }
 
-  function applyFilterSort() {
-    setShowFilterPanel(false);
+  let displayedItems = [...items];
+
+  // Filter by category
+  if (filteredCategory) {
+    displayedItems = displayedItems.filter((item) => item.category === filteredCategory);
   }
 
-  function clearAllFilters() {
-    setFilteredCategories([]);
-    setSortBy("likes");
-    setShowFilterPanel(false);
-  }
-
-  let filteredItems = [...items];
-
-  if (filteredCategories.length > 0) {
-    filteredItems = filteredItems.filter((item) =>
-      filteredCategories.includes(item.category)
-    );
-  }
-
+  // Sort
   if (sortBy === "likes") {
-    filteredItems.sort((a, b) => b.likes - a.likes);
+    displayedItems.sort((a, b) => b.likes - a.likes);
   } else if (sortBy === "date") {
-    filteredItems.sort((a, b) => {
+    displayedItems.sort((a, b) => {
       const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
       const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
       return dateB - dateA;
@@ -115,30 +104,33 @@ export default function Explore() {
       </div>
 
       <div className="p-4 max-w-5xl mx-auto">
-        {/* Filter & Add Row */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
+        {/* Filter & Sort Row */}
+        <div className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-xl shadow p-4 mb-6">
+          {/* Category Dropdown */}
+          <select
+            value={filteredCategory}
+            onChange={(e) => setFilteredCategory(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea"
+          >
+            <option value="">All Categories</option>
             {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() =>
-                  setFilteredCategories((prev) =>
-                    prev.includes(cat)
-                      ? prev.filter((c) => c !== cat)
-                      : [...prev, cat]
-                  )
-                }
-                className={`px-3 py-1 rounded-full text-sm transition ${
-                  filteredCategories.includes(cat)
-                    ? "bg-sea text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-sea hover:text-white"
-                }`}
-              >
+              <option key={cat} value={cat}>
                 {cat}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
 
+          {/* Sort Dropdown */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="mt-3 sm:mt-0 px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea"
+          >
+            <option value="likes">Most Likes</option>
+            <option value="date">Newest First</option>
+          </select>
+
+          {/* Admin Add Button */}
           {currentUser?.email === "stoneflowerhome@gmail.com" && (
             <button
               onClick={() => navigate("/explore/add")}
@@ -151,10 +143,10 @@ export default function Explore() {
 
         {/* Grid of cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredItems.map((item) => (
+          {displayedItems.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 relative"
+              className="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 relative"
             >
               {/* Category Badge */}
               <div
