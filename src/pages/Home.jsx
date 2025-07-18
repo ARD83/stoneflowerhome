@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import bgImage from "../assets/beach-background.png"; // ✅ Add the background image
+import bgImage from "../assets/beach-background.png"; // ✅ Background image
 
 export default function Home() {
   const navigate = useNavigate();
