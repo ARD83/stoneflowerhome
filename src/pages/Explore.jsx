@@ -68,7 +68,7 @@ export default function Explore() {
     updateDoc(docRef, { likes: increment(1) }).then(() => {
       setItems((prev) =>
         prev.map((item) =>
-          item.id === itemId ? { ...item, likes: item.likes + 1 } : item
+          item.id === itemId ? { ...item, likes: (item.likes ?? 0) + 1 } : item
         )
       );
     });
@@ -81,7 +81,7 @@ export default function Explore() {
   }
 
   if (sortBy === "likes") {
-    displayedItems.sort((a, b) => b.likes - a.likes);
+    displayedItems.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
   } else if (sortBy === "date") {
     displayedItems.sort((a, b) => {
       const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
@@ -216,7 +216,7 @@ export default function Explore() {
                   onClick={() => handleLike(item.id)}
                   className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
                 >
-                  ❤️ <span>{item.likes}</span>
+                  ❤️ <span>{item.likes ?? 0}</span>
                 </button>
               </div>
 
