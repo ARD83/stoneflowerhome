@@ -11,7 +11,7 @@ function getBadgeColor(category) {
     case "Restaurants & Bars":
       return "bg-green-500 text-white";
     case "Tours":
-      return "bg-yellow-400 text-white";
+      return "bg-orange-500 text-white";
     case "Shops":
       return "bg-purple-500 text-white";
     default:
@@ -30,12 +30,8 @@ function formatDate(timestamp) {
 
 export default function Explore() {
   const [items, setItems] = useState([]);
-  const [filteredCategory, setFilteredCategory] = useState("");
-  const [sortBy, setSortBy] = useState("likes");
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-
-  const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
   useEffect(() => {
     async function fetchItems() {
@@ -73,81 +69,46 @@ export default function Explore() {
     });
   }
 
-  let displayedItems = [...items];
-
-  if (filteredCategory) {
-    displayedItems = displayedItems.filter((item) => item.category === filteredCategory);
-  }
-
-  if (sortBy === "likes") {
-    displayedItems.sort((a, b) => b.likes - a.likes);
-  } else if (sortBy === "date") {
-    displayedItems.sort((a, b) => {
-      const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-      const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date);
-      return dateB - dateA;
-    });
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-sky-300 to-teal-200 text-center py-14">
-        <h1 className="text-5xl font-bold text-sea drop-shadow">
+      <div className="bg-gradient-to-r from-sky-400 to-teal-300 text-center py-12">
+        <h1 className="text-5xl font-bold text-white drop-shadow">
           Explore Sardinia
         </h1>
-        <p className="text-lg text-sea mt-3 max-w-xl mx-auto">
-          Discover beautiful beaches, amazing restaurants, and hidden gems shared by guests.
+        <p className="text-lg text-white mt-3 max-w-xl mx-auto">
+          Find breathtaking beaches, hidden gems, and guest-recommended spots.
         </p>
-      </div>
 
-      {/* Filter & Sort */}
-      <div className="max-w-6xl mx-auto px-4 mt-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        {/* Category Filter */}
-        <select
-          value={filteredCategory}
-          onChange={(e) => setFilteredCategory(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-sea"
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-
-        {/* Sort Dropdown */}
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-sea"
-        >
-          <option value="likes">Most Likes</option>
-          <option value="date">Newest First</option>
-        </select>
-
-        {/* Add Button (Admin only) */}
-        {currentUser?.email === "stoneflowerhome@gmail.com" && (
+        {/* Filter & Add Buttons */}
+        <div className="flex justify-center mt-6 gap-4 flex-wrap">
           <button
-            onClick={() => navigate("/explore/add")}
-            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition"
+            className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
           >
-            ➕ Add Explore
+            <span>☰</span> Filter & Sort
           </button>
-        )}
+
+          {currentUser?.email === "stoneflowerhome@gmail.com" && (
+            <button
+              onClick={() => navigate("/explore/add")}
+              className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
+            >
+              <span>➕</span> Add Explore
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Cards */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
-        {displayedItems.map((item) => (
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-4 py-8">
+        {items.map((item) => (
           <div
             key={item.id}
-            className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1"
+            className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative"
           >
             {/* Category Badge */}
             <div
-              className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
+              className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
                 item.category
               )}`}
             >
@@ -167,23 +128,22 @@ export default function Explore() {
 
             {/* Content */}
             <div className="p-5">
-              <h2 className="text-2xl font-bold text-sea mb-2">{item.title}</h2>
-              <p className="text-gray-600">{item.description}</p>
+              <h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
+              <p className="text-gray-600 mb-2">{item.description}</p>
 
               {item.link && (
                 <a
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sea underline inline-block mt-2"
+                  className="text-sea underline inline-block mb-2"
                 >
                   Visit
                 </a>
               )}
 
-              {/* Footer */}
-              <div className="flex justify-between items-center mt-4">
-                <span className="text-sm text-gray-400">
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-sm text-gray-500">
                   Added: {formatDate(item.date)}
                 </span>
                 <button
@@ -193,17 +153,17 @@ export default function Explore() {
                   ❤️ <span>{item.likes}</span>
                 </button>
               </div>
-
-              {/* Admin Edit */}
-              {currentUser?.email === "stoneflowerhome@gmail.com" && (
-                <button
-                  onClick={() => navigate(`/explore/edit/${item.id}`)}
-                  className="mt-4 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-                >
-                  ✏️ Edit
-                </button>
-              )}
             </div>
+
+            {/* Admin Edit Button */}
+            {currentUser?.email === "stoneflowerhome@gmail.com" && (
+              <button
+                onClick={() => navigate(`/explore/edit/${item.id}`)}
+                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+              >
+                ✏️ Edit
+              </button>
+            )}
           </div>
         ))}
       </div>
