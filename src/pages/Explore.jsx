@@ -89,10 +89,10 @@ export default function Explore() {
   return (
     <div className="mt-20 p-4">
       {/* 🌊 Homepage-style Heading */}
-      <h1 className="text-5xl font-bold text-white mb-3 text-center drop-shadow">
+      <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
         Explore Sardinia
       </h1>
-      <p className="text-lg text-white text-center mb-6 max-w-2xl mx-auto drop-shadow">
+      <p className="text-lg text-sea text-center mb-6 max-w-2xl mx-auto drop-shadow">
         Discover stunning beaches, delicious food, and hidden gems shared by guests.
       </p>
 
