@@ -86,14 +86,12 @@ export default function Explore() {
 
   let filteredItems = [...items];
 
-  // Filter by selected categories
   if (filteredCategories.length > 0) {
     filteredItems = filteredItems.filter((item) =>
       filteredCategories.includes(item.category)
     );
   }
 
-  // Sort
   if (sortBy === "likes") {
     filteredItems.sort((a, b) => b.likes - a.likes);
   } else if (sortBy === "date") {
@@ -116,86 +114,40 @@ export default function Explore() {
         </p>
       </div>
 
-      <div className="p-4">
-        {/* Filter & Add Button Row */}
-        <div className="sticky top-16 z-40 bg-white/70 backdrop-blur rounded-full shadow px-4 py-2 flex justify-between items-center mb-6">
-          <button
-            onClick={() => setShowFilterPanel(true)}
-            className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
-          >
-            🛠 Filter & Sort
-          </button>
+      <div className="p-4 max-w-5xl mx-auto">
+        {/* Filter & Add Row */}
+        <div className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-lg shadow p-4 mb-6">
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() =>
+                  setFilteredCategories((prev) =>
+                    prev.includes(cat)
+                      ? prev.filter((c) => c !== cat)
+                      : [...prev, cat]
+                  )
+                }
+                className={`px-3 py-1 rounded-full text-sm transition ${
+                  filteredCategories.includes(cat)
+                    ? "bg-sea text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-sea hover:text-white"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
 
           {currentUser?.email === "stoneflowerhome@gmail.com" && (
             <button
               onClick={() => navigate("/explore/add")}
-              className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
+              className="mt-3 sm:mt-0 bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
             >
               ➕ Add Explore
             </button>
           )}
         </div>
-
-        {/* Filter & Sort Panel */}
-        {showFilterPanel && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-            <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-lg">
-              <h2 className="text-xl font-bold text-sea mb-4">Filter & Sort</h2>
-
-              {/* Categories */}
-              <div className="mb-4">
-                <h3 className="font-semibold mb-2">Categories</h3>
-                {categories.map((cat) => (
-                  <div key={cat} className="flex items-center mb-1">
-                    <input
-                      type="checkbox"
-                      id={cat}
-                      checked={filteredCategories.includes(cat)}
-                      onChange={() =>
-                        setFilteredCategories((prev) =>
-                          prev.includes(cat)
-                            ? prev.filter((c) => c !== cat)
-                            : [...prev, cat]
-                        )
-                      }
-                      className="mr-2"
-                    />
-                    <label htmlFor={cat}>{cat}</label>
-                  </div>
-                ))}
-              </div>
-
-              {/* Sort By */}
-              <div className="mb-4">
-                <h3 className="font-semibold mb-2">Sort By</h3>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="border rounded px-3 py-1 w-full"
-                >
-                  <option value="likes">Most Likes</option>
-                  <option value="date">Newest First</option>
-                </select>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={clearAllFilters}
-                  className="text-red-500 hover:underline"
-                >
-                  Clear All
-                </button>
-                <button
-                  onClick={applyFilterSort}
-                  className="bg-sea text-white px-4 py-1 rounded hover:bg-sunset transition"
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Grid of cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -225,16 +177,16 @@ export default function Explore() {
               />
 
               {/* Content */}
-              <div className="p-4 flex flex-col justify-between">
-                <h2 className="text-xl font-bold text-sea">{item.title}</h2>
-                <p className="text-gray-700 mt-1">{item.description}</p>
+              <div className="p-4">
+                <h2 className="text-xl font-bold text-sea mb-1">{item.title}</h2>
+                <p className="text-gray-700 mb-2">{item.description}</p>
 
                 {item.link && (
                   <a
                     href={item.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sea underline mt-2"
+                    className="text-sea underline"
                   >
                     Visit
                   </a>
