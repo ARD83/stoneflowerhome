@@ -57,20 +57,17 @@ const Navbar = forwardRef((props, ref) => {
 
       {/* Right: Admin icon */}
       <Link to="/admin" className="text-gray-800 hover:text-sea transition">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-8 w-8"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5.121 17.804A10 10 0 1112 22a10 10 0 01-6.879-4.196z"
-          />
-        </svg>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  className="h-8 w-8"
+  fill="currentColor"
+  viewBox="0 0 20 20"
+>
+  <path
+    d="M10 10a4 4 0 100-8 4 4 0 000 8zm-7 8a7 7 0 0114 0H3z"
+  />
+</svg>
+
       </Link>
 
       {/* Sliding Menu */}
