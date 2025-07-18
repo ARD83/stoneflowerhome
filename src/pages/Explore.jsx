@@ -64,7 +64,7 @@ export default function Explore() {
 
   // Handle likes
   function handleLike(itemId) {
-    if (currentUser) {
+    if (currentUser?.email === "stoneflowerhome@gmail.com") {
       alert("Admins cannot vote.");
       return;
     }
@@ -105,7 +105,7 @@ export default function Explore() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative pt-[100px]" // ✅ Added top padding
+      className="min-h-screen bg-cover bg-center relative" // ✅ Removed extra pt-[100px]
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}
@@ -140,7 +140,7 @@ export default function Explore() {
                   <select
                     value={filteredCategory}
                     onChange={(e) => setFilteredCategory(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-white" // ✅ Dark text + white background
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-white"
                   >
                     <option value="">All Categories</option>
                     {categories.map((cat) => (
