@@ -212,12 +212,13 @@ export default function Explore() {
                 <span className="text-sm text-gray-500">
                   Added: {formatDate(item.date)}
                 </span>
-                <button
-                  onClick={() => handleLike(item.id)}
-                  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
-                >
-                  ❤️ <span>{item.likes ?? 0}</span>
-                </button>
+<button
+  onClick={() => handleLike(item.id)}
+  className="flex items-center gap-1 text-red-600 hover:text-red-700 transition font-semibold"
+>
+  <span role="img" aria-label="like">❤️</span>
+  <span>{item.likes !== undefined && item.likes !== null ? item.likes : 0}</span>
+</button>
               </div>
 
               {/* Admin Edit */}
