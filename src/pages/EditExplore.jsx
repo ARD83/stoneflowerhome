@@ -4,6 +4,7 @@ import { db, storage } from "../firebase";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import imageCompression from "browser-image-compression";
+import backgroundImage from "../assets/explore-bg.jpg"; // ✅ use Explore background
 
 export default function EditExplore() {
   const { id } = useParams();
@@ -96,6 +97,7 @@ export default function EditExplore() {
   };
 
   const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
     try {
       await deleteDoc(doc(db, "explore", id));
       navigate("/explore");
@@ -105,77 +107,128 @@ export default function EditExplore() {
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto mt-20">
-      <h1 className="text-2xl font-bold text-sea mb-4 text-center">Edit Explore Item</h1>
-      <form onSubmit={handleSave} className="bg-white p-4 rounded-lg shadow-md">
-        <label className="block text-sm text-gray-600 mb-1">Category</label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-          className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
+    <div
+      className="min-h-screen bg-cover bg-center relative pt-[100px]"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+      }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
+
+      <div className="relative z-10 max-w-2xl mx-auto p-4">
+        <h1 className="text-4xl font-bold text-white text-center mb-6 drop-shadow">
+          Edit Explore Item
+        </h1>
+
+        <form
+          onSubmit={handleSave}
+          className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg space-y-4"
         >
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-
-        <label className="block text-sm text-gray-600 mb-1">Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
-        />
-
-        <label className="block text-sm text-gray-600 mb-1">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
-          rows="3"
-        ></textarea>
-
-        <label className="block text-sm text-gray-600 mb-1">Optional Link</label>
-        <input
-          type="url"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          className="w-full mb-3 p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
-        />
-
-        {imageUrl && (
-          <div className="mb-3">
-            <img src={imageUrl} alt="Current" className="rounded-lg shadow max-h-48 mx-auto" />
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Category
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
 
-        <label className="block text-sm text-gray-600 mb-1">Replace Image</label>
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          onChange={handleFileChange}
-          className="w-full mb-3"
-        />
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Title
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
+            />
+          </div>
 
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="flex-1 bg-sea text-white p-2 rounded hover:bg-sunset"
-          >
-            Save Changes
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="flex-1 bg-coral text-white p-2 rounded hover:bg-red-700"
-          >
-            Delete Item
-          </button>
-        </div>
-      </form>
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              rows="4"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
+            ></textarea>
+          </div>
+
+          {/* Optional Link */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Optional Link
+            </label>
+            <input
+              type="url"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="https://example.com"
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
+            />
+          </div>
+
+          {/* Current Image */}
+          {imageUrl && (
+            <div className="text-center">
+              <p className="text-gray-600 text-sm mb-2">Current Image:</p>
+              <img
+                src={imageUrl}
+                alt="Current"
+                className="rounded-lg shadow max-h-56 mx-auto"
+              />
+            </div>
+          )}
+
+          {/* Replace Image */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Replace Image
+            </label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              className="w-full text-gray-600"
+            />
+          </div>
+
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              className="flex-1 bg-sea text-white py-3 rounded-lg hover:bg-sunset transition"
+            >
+              💾 Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="flex-1 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
+            >
+              🗑️ Delete Item
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
