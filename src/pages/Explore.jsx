@@ -3,9 +3,7 @@ import { collection, getDocs, doc, updateDoc, increment } from "firebase/firesto
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-
-// Background image URL
-const backgroundImageUrl = "/assets/explore_background.png"; // Add your image to public/images
+import backgroundImage from "../assets/explore-bg.jpg"; // <-- import your background image
 
 function getBadgeColor(category) {
   switch (category) {
@@ -97,7 +95,7 @@ export default function Explore() {
     <div
       className="min-h-screen bg-cover bg-center relative"
       style={{
-        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundImage: `url(${backgroundImage})`,
       }}
     >
       {/* Overlay */}
