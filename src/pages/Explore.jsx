@@ -7,15 +7,15 @@ import { useNavigate } from "react-router-dom";
 function getBadgeColor(category) {
   switch (category) {
     case "Beaches":
-      return "bg-sky-400 text-white";
+      return "bg-sky-500 text-white";
     case "Restaurants & Bars":
-      return "bg-green-400 text-white";
+      return "bg-green-500 text-white";
     case "Tours":
-      return "bg-orange-400 text-white";
+      return "bg-yellow-400 text-white";
     case "Shops":
-      return "bg-purple-400 text-white";
+      return "bg-purple-500 text-white";
     default:
-      return "bg-gray-300 text-white";
+      return "bg-gray-400 text-white";
   }
 }
 
@@ -75,12 +75,10 @@ export default function Explore() {
 
   let displayedItems = [...items];
 
-  // Filter by category
   if (filteredCategory) {
     displayedItems = displayedItems.filter((item) => item.category === filteredCategory);
   }
 
-  // Sort
   if (sortBy === "likes") {
     displayedItems.sort((a, b) => b.likes - a.likes);
   } else if (sortBy === "date") {
@@ -92,24 +90,24 @@ export default function Explore() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-sky-300 to-teal-200 text-center py-12">
-        <h1 className="text-5xl font-bold text-sea drop-shadow-lg">
+      <div className="bg-gradient-to-r from-sky-300 to-teal-200 text-center py-14">
+        <h1 className="text-5xl font-bold text-sea drop-shadow">
           Explore Sardinia
         </h1>
-        <p className="text-lg text-sea mt-2 max-w-xl mx-auto">
-          Discover breathtaking beaches, charming restaurants, and hidden gems shared by other guests.
+        <p className="text-lg text-sea mt-3 max-w-xl mx-auto">
+          Discover beautiful beaches, amazing restaurants, and hidden gems shared by guests.
         </p>
       </div>
 
-      {/* Filter & Sort Row */}
-      <div className="max-w-6xl mx-auto px-4 mt-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-3">
-        {/* Category Dropdown */}
+      {/* Filter & Sort */}
+      <div className="max-w-6xl mx-auto px-4 mt-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        {/* Category Filter */}
         <select
           value={filteredCategory}
           onChange={(e) => setFilteredCategory(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea w-full sm:w-auto"
+          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-sea"
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
@@ -123,33 +121,33 @@ export default function Explore() {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea w-full sm:w-auto"
+          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-sea"
         >
           <option value="likes">Most Likes</option>
           <option value="date">Newest First</option>
         </select>
 
-        {/* Admin Add Button */}
+        {/* Add Button (Admin only) */}
         {currentUser?.email === "stoneflowerhome@gmail.com" && (
           <button
             onClick={() => navigate("/explore/add")}
-            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition w-full sm:w-auto"
+            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition"
           >
             ➕ Add Explore
           </button>
         )}
       </div>
 
-      {/* Grid of cards */}
+      {/* Cards */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
         {displayedItems.map((item) => (
           <div
             key={item.id}
-            className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative"
+            className="bg-white rounded-3xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1"
           >
             {/* Category Badge */}
             <div
-              className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
+              className={`absolute top-4 left-4 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
                 item.category
               )}`}
             >
@@ -177,12 +175,13 @@ export default function Explore() {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sea underline mt-2 inline-block"
+                  className="text-sea underline inline-block mt-2"
                 >
                   Visit
                 </a>
               )}
 
+              {/* Footer */}
               <div className="flex justify-between items-center mt-4">
                 <span className="text-sm text-gray-400">
                   Added: {formatDate(item.date)}
@@ -194,17 +193,17 @@ export default function Explore() {
                   ❤️ <span>{item.likes}</span>
                 </button>
               </div>
-            </div>
 
-            {/* Admin Edit Button */}
-            {currentUser?.email === "stoneflowerhome@gmail.com" && (
-              <button
-                onClick={() => navigate(`/explore/edit/${item.id}`)}
-                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-              >
-                ✏️ Edit
-              </button>
-            )}
+              {/* Admin Edit */}
+              {currentUser?.email === "stoneflowerhome@gmail.com" && (
+                <button
+                  onClick={() => navigate(`/explore/edit/${item.id}`)}
+                  className="mt-4 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                >
+                  ✏️ Edit
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
