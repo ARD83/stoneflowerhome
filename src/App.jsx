@@ -11,15 +11,17 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 
-export default function App() {
+function AppContent() {
   const location = useLocation();
 
+  const isHome = location.pathname === "/";
+
   return (
-    <Router>
-      {/* ✅ Only show navbar if not on homepage */}
-      {location.pathname !== "/" && <Navbar />}
-      
-      <div className="pt-20"> {/* Padding for fixed navbar */}
+    <>
+      {/* ✅ Show Navbar only if NOT on Home */}
+      {!isHome && <Navbar />}
+
+      <div className={isHome ? "" : "pt-20"}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -55,6 +57,14 @@ export default function App() {
           />
         </Routes>
       </div>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
