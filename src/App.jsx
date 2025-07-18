@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Wifi from "./pages/Wifi";
 import Explore from "./pages/Explore";
@@ -11,12 +11,26 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 
+function Layout({ children }) {
+  const location = useLocation();
+
+  // ✅ Hide navbar on homepage (/), show it everywhere else
+  const hideNavbar = location.pathname === "/";
+
+  return (
+    <>
+      {!hideNavbar && <Navbar />}
+      <div className={!hideNavbar ? "pt-[100px]" : ""}>
+        {children}
+      </div>
+    </>
+  );
+}
+
 export default function App() {
   return (
     <Router>
-      <Navbar />
-      {/* ✅ Add top padding globally for fixed Navbar */}
-      <div className="pt-[100px]"> 
+      <Layout>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -51,7 +65,7 @@ export default function App() {
             }
           />
         </Routes>
-      </div>
+      </Layout>
     </Router>
   );
 }
