@@ -7,7 +7,7 @@ export default function Navbar() {
       <Link to="/" className="hover:text-coral">Home</Link>
       <Link to="/wifi" className="hover:text-coral">Wi‑Fi</Link>
       <Link to="/explore" className="hover:text-coral">Explore</Link>
-      <Link to="/gallery" className="hover:text-coral">Gallery</Link>
+      <Link to="/gallery" className="hover:text-coral">Guest Gallery</Link>
       <Link to="/admin" className="hover:text-coral">Admin</Link>
     </nav>
   );
