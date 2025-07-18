@@ -6,7 +6,7 @@ const Navbar = forwardRef((props, ref) => {
   const location = useLocation();
 
   const navLinks = [
-    { name: "Home", path: "/home" },
+    { name: "Home", path: "/ " },
     { name: "Wifi", path: "/wifi" },
     { name: "Explore", path: "/explore" },
     { name: "Guest Gallery", path: "/gallery" },
