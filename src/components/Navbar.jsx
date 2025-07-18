@@ -15,7 +15,7 @@ export default function Navbar() {
           Explore
         </Link>
         <Link to="/gallery" className="hover:text-coral transition-colors">
-          Gallery
+          Guest Gallery
         </Link>
         <Link to="/admin" className="hover:text-coral transition-colors">
           Admin
