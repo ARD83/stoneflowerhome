@@ -12,46 +12,46 @@ import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 
 export default function App() {
-  return (
-    <Router>
+ return (
+  <Router>
     {/* ✅ Show Navbar only if not on homepage */}
     {location.pathname !== "/" && <Navbar />}
-        
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/wifi" element={<Wifi />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/gallery" element={<GuestGallery />} />
-          <Route path="/admin" element={<AdminLogin />} />
 
-          {/* Admin-only Routes */}
-          <Route
-            path="/explore/add"
-            element={
-              <PrivateRoute>
-                <AddExplore />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/explore/edit/:id"
-            element={
-              <PrivateRoute>
-                <EditExplore />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <AdminDashboard />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
+    <div className="pt-20">
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/wifi" element={<Wifi />} />
+        <Route path="/explore" element={<Explore />} />
+        <Route path="/gallery" element={<GuestGallery />} />
+        <Route path="/admin" element={<AdminLogin />} />
+
+        {/* Admin-only Routes */}
+        <Route
+          path="/explore/add"
+          element={
+            <PrivateRoute>
+              <AddExplore />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/explore/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditExplore />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </div>
+  </Router>
+);
