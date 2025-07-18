@@ -92,37 +92,38 @@ export default function Explore() {
       <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
         Explore Sardinia
       </h1>
-      <p className="text-lg text-sea text-center mb-6 max-w-2xl mx-auto drop-shadow">
+      <p className="text-lg text-sea text-center mb-4 max-w-2xl mx-auto">
         Discover stunning beaches, delicious food, and hidden gems shared by guests.
       </p>
 
-      {/* Admin Add Button */}
-      {currentUser?.email === "stoneflowerhome@gmail.com" && (
-        <div className="flex justify-center mb-6">
+      {/* Top Bar: Filter & Add Button */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        {/* Category Filter */}
+        <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilteredCategory(cat)}
+              className={`px-3 py-1 rounded-full border text-sm font-medium transition ${
+                filteredCategory === cat
+                  ? "bg-sea text-white border-sea shadow"
+                  : "border-sea text-sea hover:bg-sea hover:text-white"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Admin Add Button */}
+        {currentUser?.email === "stoneflowerhome@gmail.com" && (
           <button
             onClick={() => navigate("/explore/add")}
-            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition"
+            className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
           >
-            ➕ Add Explore
+            ➕ Add New
           </button>
-        </div>
-      )}
-
-      {/* Category filter */}
-      <div className="flex flex-wrap gap-2 justify-center mb-6">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilteredCategory(cat)}
-            className={`px-4 py-1 rounded-full border ${
-              filteredCategory === cat
-                ? "bg-sea text-white border-sea"
-                : "bg-white text-sea border-sea"
-            } hover:bg-sea hover:text-white transition`}
-          >
-            {cat}
-          </button>
-        ))}
+        )}
       </div>
 
       {/* Grid of cards */}
@@ -143,9 +144,13 @@ export default function Explore() {
 
             {/* Image */}
             <img
-              src={item.image}
+              src={item.image || "/placeholder.jpg"}
               alt={item.title}
               className="w-full h-56 object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/placeholder.jpg";
+              }}
             />
 
             {/* Content */}
