@@ -7,9 +7,9 @@ const Navbar = forwardRef((props, ref) => {
 
   const navLinks = [
     { name: "Home", path: "/ " },
-    { name: "Wifi", path: "/wifi" },
     { name: "Explore", path: "/explore" },
     { name: "Guest Gallery", path: "/gallery" },
+    { name: "Wifi", path: "/wifi" },
   ];
 
   return (
