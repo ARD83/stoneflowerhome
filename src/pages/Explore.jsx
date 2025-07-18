@@ -89,12 +89,24 @@ export default function Explore() {
   return (
     <div className="mt-20 p-4">
       {/* 🌊 Homepage-style Heading */}
-      <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
+      <h1 className="text-5xl font-bold text-white mb-3 text-center drop-shadow">
         Explore Sardinia
       </h1>
-      <p className="text-lg text-sunset text-center mb-6 max-w-2xl mx-auto">
+      <p className="text-lg text-white text-center mb-6 max-w-2xl mx-auto drop-shadow">
         Discover stunning beaches, delicious food, and hidden gems shared by guests.
       </p>
+
+      {/* Admin Add Button */}
+      {currentUser?.email === "stoneflowerhome@gmail.com" && (
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => navigate("/explore/add")}
+            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition"
+          >
+            ➕ Add Explore
+          </button>
+        </div>
+      )}
 
       {/* Category filter */}
       <div className="flex flex-wrap gap-2 justify-center mb-6">
