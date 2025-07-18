@@ -3,6 +3,7 @@ import { collection, getDocs, doc, updateDoc, increment } from "firebase/firesto
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import bgImage from "../assets/beach-background.png"; // ✅ Add background image
 
 function getBadgeColor(category) {
   switch (category) {
@@ -87,112 +88,119 @@ export default function Explore() {
   const categories = ["All", "Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
 
   return (
-    <div className="mt-20 p-4">
-      {/* 🌊 Homepage-style Heading */}
-      <h1 className="text-5xl font-bold text-sea mb-3 text-center drop-shadow">
-        Explore Sardinia
-      </h1>
-      <p className="text-lg text-sea text-center mb-4 max-w-2xl mx-auto">
-        Discover stunning beaches, delicious food, and hidden gems shared by guests.
-      </p>
+    <div
+      className="min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+      }}
+    >
+      <div className="bg-black/40 min-h-screen px-4 py-8">
+        {/* 🌊 Homepage-style Heading */}
+        <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3 text-center drop-shadow">
+          Explore Sardinia
+        </h1>
+        <p className="text-md sm:text-lg text-white text-center mb-6 max-w-2xl mx-auto drop-shadow">
+          Discover stunning beaches, delicious food, and hidden gems shared by guests.
+        </p>
 
-      {/* Top Bar: Filter & Add Button */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-          {categories.map((cat) => (
+        {/* Top Bar: Filter & Add Button */}
+        <div className="relative flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          {/* Category Filter */}
+          <div className="flex overflow-x-auto gap-2 w-full sm:w-auto justify-center sm:justify-start">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilteredCategory(cat)}
+                className={`whitespace-nowrap px-3 py-1 rounded-full border text-sm font-medium transition ${
+                  filteredCategory === cat
+                    ? "bg-sea text-white border-sea shadow"
+                    : "border-sea text-sea hover:bg-sea hover:text-white"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Admin Add Button */}
+          {currentUser?.email === "stoneflowerhome@gmail.com" && (
             <button
-              key={cat}
-              onClick={() => setFilteredCategory(cat)}
-              className={`px-3 py-1 rounded-full border text-sm font-medium transition ${
-                filteredCategory === cat
-                  ? "bg-sea text-white border-sea shadow"
-                  : "border-sea text-sea hover:bg-sea hover:text-white"
-              }`}
+              onClick={() => navigate("/explore/add")}
+              className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
             >
-              {cat}
+              ➕ Add New
             </button>
-          ))}
+          )}
         </div>
 
-        {/* Admin Add Button */}
-        {currentUser?.email === "stoneflowerhome@gmail.com" && (
-          <button
-            onClick={() => navigate("/explore/add")}
-            className="bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
-          >
-            ➕ Add New
-          </button>
-        )}
-      </div>
-
-      {/* Grid of cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1 relative"
-          >
-            {/* Category Badge */}
+        {/* Grid of cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredItems.map((item) => (
             <div
-              className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
-                item.category
-              )}`}
+              key={item.id}
+              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1 relative"
             >
-              {item.category}
-            </div>
-
-            {/* Image */}
-            <img
-              src={item.image || "/placeholder.jpg"}
-              alt={item.title}
-              className="w-full h-56 object-cover"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "/placeholder.jpg";
-              }}
-            />
-
-            {/* Content */}
-            <div className="p-4 flex flex-col justify-between">
-              <h2 className="text-xl font-bold text-sea">{item.title}</h2>
-              <p className="text-gray-700 mt-1">{item.description}</p>
-
-              {item.link && (
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sea underline mt-2"
-                >
-                  Visit
-                </a>
-              )}
-
-              <div className="flex items-center justify-between mt-3">
-                <span className="text-sm text-gray-500">
-                  Added: {formatDate(item.date)}
-                </span>
-                <button
-                  onClick={() => handleLike(item.id)}
-                  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
-                >
-                  ❤️ <span>{item.likes}</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Admin Edit Button */}
-            {currentUser?.email === "stoneflowerhome@gmail.com" && (
-              <button
-                onClick={() => navigate(`/explore/edit/${item.id}`)}
-                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+              {/* Category Badge */}
+              <div
+                className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
+                  item.category
+                )}`}
               >
-                ✏️ Edit
-              </button>
-            )}
-          </div>
-        ))}
+                {item.category}
+              </div>
+
+              {/* Image */}
+              <img
+                src={item.image || "/placeholder.jpg"}
+                alt={item.title}
+                className="w-full h-56 object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/placeholder.jpg";
+                }}
+              />
+
+              {/* Content */}
+              <div className="p-4 flex flex-col justify-between">
+                <h2 className="text-xl font-bold text-sea">{item.title}</h2>
+                <p className="text-gray-700 mt-1">{item.description}</p>
+
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sea underline mt-2"
+                  >
+                    Visit
+                  </a>
+                )}
+
+                <div className="flex items-center justify-between mt-3">
+                  <span className="text-sm text-gray-500">
+                    Added: {formatDate(item.date)}
+                  </span>
+                  <button
+                    onClick={() => handleLike(item.id)}
+                    className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
+                  >
+                    ❤️ <span>{item.likes}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Admin Edit Button */}
+              {currentUser?.email === "stoneflowerhome@gmail.com" && (
+                <button
+                  onClick={() => navigate(`/explore/edit/${item.id}`)}
+                  className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                >
+                  ✏️ Edit
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
