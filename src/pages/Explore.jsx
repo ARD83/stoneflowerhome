@@ -99,116 +99,114 @@ export default function Explore() {
           Explore Sardinia
         </h1>
         <p className="text-lg text-sea mt-2 max-w-xl mx-auto">
-          Find breathtaking beaches, hidden gems, and guest-recommended spots.
+          Discover breathtaking beaches, charming restaurants, and hidden gems shared by other guests.
         </p>
       </div>
 
-      <div className="p-4 max-w-5xl mx-auto">
-        {/* Filter & Sort Row */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-white rounded-xl shadow p-4 mb-6">
-          {/* Category Dropdown */}
-          <select
-            value={filteredCategory}
-            onChange={(e) => setFilteredCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea"
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-
-          {/* Sort Dropdown */}
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="mt-3 sm:mt-0 px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea"
-          >
-            <option value="likes">Most Likes</option>
-            <option value="date">Newest First</option>
-          </select>
-
-          {/* Admin Add Button */}
-          {currentUser?.email === "stoneflowerhome@gmail.com" && (
-            <button
-              onClick={() => navigate("/explore/add")}
-              className="mt-3 sm:mt-0 bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition text-sm"
-            >
-              ➕ Add Explore
-            </button>
-          )}
-        </div>
-
-        {/* Grid of cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {displayedItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1 relative"
-            >
-              {/* Category Badge */}
-              <div
-                className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
-                  item.category
-                )}`}
-              >
-                {item.category}
-              </div>
-
-              {/* Image */}
-              <img
-                src={item.image || "/placeholder.jpg"}
-                alt={item.title}
-                className="w-full h-56 object-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/placeholder.jpg";
-                }}
-              />
-
-              {/* Content */}
-              <div className="p-4">
-                <h2 className="text-xl font-bold text-sea mb-1">{item.title}</h2>
-                <p className="text-gray-700 mb-2">{item.description}</p>
-
-                {item.link && (
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sea underline"
-                  >
-                    Visit
-                  </a>
-                )}
-
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-sm text-gray-500">
-                    Added: {formatDate(item.date)}
-                  </span>
-                  <button
-                    onClick={() => handleLike(item.id)}
-                    className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
-                  >
-                    ❤️ <span>{item.likes}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Admin Edit Button */}
-              {currentUser?.email === "stoneflowerhome@gmail.com" && (
-                <button
-                  onClick={() => navigate(`/explore/edit/${item.id}`)}
-                  className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-                >
-                  ✏️ Edit
-                </button>
-              )}
-            </div>
+      {/* Filter & Sort Row */}
+      <div className="max-w-6xl mx-auto px-4 mt-6 mb-8 flex flex-col sm:flex-row justify-between items-center gap-3">
+        {/* Category Dropdown */}
+        <select
+          value={filteredCategory}
+          onChange={(e) => setFilteredCategory(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea w-full sm:w-auto"
+        >
+          <option value="">All Categories</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
           ))}
-        </div>
+        </select>
+
+        {/* Sort Dropdown */}
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded-full text-gray-700 focus:outline-none focus:ring focus:border-sea w-full sm:w-auto"
+        >
+          <option value="likes">Most Likes</option>
+          <option value="date">Newest First</option>
+        </select>
+
+        {/* Admin Add Button */}
+        {currentUser?.email === "stoneflowerhome@gmail.com" && (
+          <button
+            onClick={() => navigate("/explore/add")}
+            className="bg-sea text-white px-5 py-2 rounded-full shadow hover:bg-sunset transition w-full sm:w-auto"
+          >
+            ➕ Add Explore
+          </button>
+        )}
+      </div>
+
+      {/* Grid of cards */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+        {displayedItems.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative"
+          >
+            {/* Category Badge */}
+            <div
+              className={`absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full ${getBadgeColor(
+                item.category
+              )}`}
+            >
+              {item.category}
+            </div>
+
+            {/* Image */}
+            <img
+              src={item.image || "/placeholder.jpg"}
+              alt={item.title}
+              className="w-full h-60 object-cover rounded-t-3xl"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/placeholder.jpg";
+              }}
+            />
+
+            {/* Content */}
+            <div className="p-5">
+              <h2 className="text-2xl font-bold text-sea mb-2">{item.title}</h2>
+              <p className="text-gray-600">{item.description}</p>
+
+              {item.link && (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sea underline mt-2 inline-block"
+                >
+                  Visit
+                </a>
+              )}
+
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-sm text-gray-400">
+                  Added: {formatDate(item.date)}
+                </span>
+                <button
+                  onClick={() => handleLike(item.id)}
+                  className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
+                >
+                  ❤️ <span>{item.likes}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Admin Edit Button */}
+            {currentUser?.email === "stoneflowerhome@gmail.com" && (
+              <button
+                onClick={() => navigate(`/explore/edit/${item.id}`)}
+                className="absolute bottom-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+              >
+                ✏️ Edit
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
