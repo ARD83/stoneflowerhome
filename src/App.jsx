@@ -9,6 +9,7 @@ import GuestGallery from "./pages/GuestGallery";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import PrivateRoute from "./components/PrivateRoute";
+import Home from "./pages/Home";
 
 export default function App() {
   return (
@@ -17,7 +18,7 @@ export default function App() {
       <div className="pt-20"> {/* Padding for fixed navbar */}
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Wifi />} />
+          <Route path="/" element={<Home />} />
           <Route path="/wifi" element={<Wifi />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/gallery" element={<GuestGallery />} />
