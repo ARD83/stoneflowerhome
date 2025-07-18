@@ -31,14 +31,14 @@ function formatDate(timestamp) {
 
 export default function Explore() {
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [filteredCategory, setFilteredCategory] = useState("");
   const [sortBy, setSortBy] = useState("likes");
   const [showFilter, setShowFilter] = useState(false);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  const categories = ["Beaches", "Restaurants & Bars", "Tours", "Shops", "Other"];
-
+  // Fetch explore items
   useEffect(() => {
     async function fetchItems() {
       try {
@@ -46,11 +46,15 @@ export default function Explore() {
         const data = querySnapshot.docs.map((doc) => {
           const item = doc.data();
           if (item.likes === undefined || item.likes === null) {
-            item.likes = 0; // Ensure likes always exists
+            item.likes = 0; // Default likes if missing
           }
           return { id: doc.id, ...item };
         });
         setItems(data);
+
+        // Extract unique categories dynamically
+        const uniqueCategories = Array.from(new Set(data.map((item) => item.category))).filter(Boolean);
+        setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching explore items:", error);
       }
@@ -58,6 +62,7 @@ export default function Explore() {
     fetchItems();
   }, []);
 
+  // Handle likes
   function handleLike(itemId) {
     if (currentUser) {
       alert("Admins cannot vote.");
@@ -83,12 +88,11 @@ export default function Explore() {
     });
   }
 
+  // Filter and sort items
   let displayedItems = [...items];
-
   if (filteredCategory) {
     displayedItems = displayedItems.filter((item) => item.category === filteredCategory);
   }
-
   if (sortBy === "likes") {
     displayedItems.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
   } else if (sortBy === "date") {
@@ -101,7 +105,7 @@ export default function Explore() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative"
+      className="min-h-screen bg-cover bg-center relative pt-20" // Fix navbar overlap
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}
