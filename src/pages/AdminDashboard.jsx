@@ -52,6 +52,13 @@ export default function AdminDashboard() {
           >
             📸 Manage Guest Gallery
           </Link>
+          <Link
+  to="/house-info/edit"
+  className="block text-center bg-sea text-white py-2 rounded hover:bg-sunset"
+>
+  Edit House Info
+</Link>
+
 
           <button
             onClick={handleLogout}
