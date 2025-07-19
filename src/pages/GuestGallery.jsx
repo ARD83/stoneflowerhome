@@ -143,6 +143,5 @@ export default function GuestGallery() {
           ))}
         </div>
       </div>
-    </div>
   );
 }
