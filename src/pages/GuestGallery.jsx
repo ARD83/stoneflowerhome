@@ -72,9 +72,9 @@ export default function GuestGallery() {
           </h1>
           <Link
             to="/gallery/add"
-            className="bg-sea text-white px-4 py-2 rounded-lg hover:bg-sunset transition"
+            className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
           >
-            ➕ Add Memory
+            ➕ Add your Memory
           </Link>
         </div>
 
