@@ -49,7 +49,7 @@ export default function GuestGallery() {
         title,
         description,
         guestName,
-        image: imageUrl,
+        image: imageUrl, // ✅ Optional image
         date: new Date(),
       });
 
@@ -188,7 +188,7 @@ export default function GuestGallery() {
 
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Upload Image
+                Upload Image (Optional)
               </label>
               <input
                 type="file"
@@ -214,15 +214,17 @@ export default function GuestGallery() {
               key={item.id}
               className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative"
             >
-              <img
-                src={item.image || "/placeholder.jpg"}
-                alt={item.title}
-                className="w-full h-60 object-cover rounded-t-3xl"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "/placeholder.jpg";
-                }}
-              />
+              {item.image ? (
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-60 object-cover rounded-t-3xl"
+                />
+              ) : (
+                <div className="w-full h-60 bg-gray-100 flex items-center justify-center rounded-t-3xl text-gray-500">
+                  No Image
+                </div>
+              )}
               <div className="p-5">
                 <h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
                 <p className="text-gray-600 mb-2">{item.description}</p>
