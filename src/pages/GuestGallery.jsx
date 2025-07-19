@@ -66,16 +66,21 @@ export default function GuestGallery() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
         {/* Title & Add Button */}
-        <div className="text-center py-12 text-white">
-          <h1 className="text-5xl font-bold drop-shadow-lg">
-            Guest Gallery
-          </h1>
-          <button
+
+          <div className="text-center py-12 text-white">
+          <h1 className="text-5xl font-bold drop-shadow-lg">Guest Gallery</h1>
+          <p className="text-lg mt-3 max-w-xl mx-auto drop-shadow">
+            Share your memory.
+          </p>
+
+            {/* Add Button (Admin only) */}
+              <button
                 onClick={() => navigate("/gallery/add")}
                 className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
               >
                 ➕ Add your Memory
               </button>
+          </div>
         </div>
 
         {/* Gallery Cards */}
