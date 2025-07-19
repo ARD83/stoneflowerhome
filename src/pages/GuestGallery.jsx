@@ -202,7 +202,7 @@ export default function GuestGallery() {
               type="submit"
               className="w-full bg-sea text-white py-3 rounded-lg hover:bg-sunset transition"
             >
-              ✅ Submit
+              ✅ Save
             </button>
           </form>
         )}
