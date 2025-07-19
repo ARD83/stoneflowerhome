@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 import EditGuestGallery from "./pages/EditGuestGallery";
+import AddGuestGallery from "./pages/AddGuestGallery.jsx";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="/explore" element={<Explore />} />
           <Route path="/gallery" element={<GuestGallery />} />
           <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/gallery/add" element={<AddGuestGallery />} />
           <Route
             path="/explore/add"
             element={
