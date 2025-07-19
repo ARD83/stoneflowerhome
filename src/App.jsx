@@ -10,6 +10,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
+import EditGuestGallery from "./pages/EditGuestGallery";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -66,6 +67,14 @@ export default function App() {
             element={
               <PrivateRoute>
                 <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/gallery/edit/:id"
+            element={
+              <PrivateRoute>
+                <EditGuestGallery />
               </PrivateRoute>
             }
           />
