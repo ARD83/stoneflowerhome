@@ -12,6 +12,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 import EditGuestGallery from "./pages/EditGuestGallery";
 import AddGuestGallery from "./pages/AddGuestGallery.jsx";
+import HouseInfo from "./pages/HouseInfo";
+import EditHouseInfo from "./pages/EditHouseInfo";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -48,6 +50,7 @@ export default function App() {
           <Route path="/gallery" element={<GuestGallery />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/gallery/add" element={<AddGuestGallery />} />
+          <Route path="/house-info" element={<HouseInfo />} />
           <Route
             path="/explore/add"
             element={
@@ -80,6 +83,14 @@ export default function App() {
               </PrivateRoute>
             }
           />
+          <Route
+  path="/house-info/edit"
+  element={
+    <PrivateRoute>
+      <EditHouseInfo />
+    </PrivateRoute>
+  }
+/>
         </Routes>
       </Layout>
     </Router>
