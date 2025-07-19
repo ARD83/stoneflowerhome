@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, addDoc, doc, deleteDoc } from "firebase/firestore";
-import { db, storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import imageCompression from "browser-image-compression";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/explore-bg.jpg"; // reuse explore background
+import backgroundImage from "../assets/explore-bg.jpg"; // same background
 
 export default function GuestGallery() {
   const [items, setItems] = useState([]);
-  const [adding, setAdding] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [guestName, setGuestName] = useState("");
-  const [imageFile, setImageFile] = useState(null);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-
   const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
 
   useEffect(() => {
@@ -35,76 +27,24 @@ export default function GuestGallery() {
     fetchGallery();
   }, []);
 
-  const handleAdd = async (e) => {
-    e.preventDefault();
-    try {
-      let imageUrl = "";
-      if (imageFile) {
-        const imageRef = ref(storage, `guestGallery/${imageFile.name}`);
-        await uploadBytes(imageRef, imageFile);
-        imageUrl = await getDownloadURL(imageRef);
-      }
-
-      await addDoc(collection(db, "guestGallery"), {
-        title,
-        description,
-        guestName,
-        image: imageUrl, // ✅ Optional image
-        date: new Date(),
-      });
-
-      setAdding(false);
-      setTitle("");
-      setDescription("");
-      setGuestName("");
-      setImageFile(null);
-
-      // Refresh gallery
-      const querySnapshot = await getDocs(collection(db, "guestGallery"));
-      const data = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setItems(data);
-    } catch (error) {
-      console.error("Error adding gallery item:", error);
-    }
-  };
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!validTypes.includes(file.type)) {
-      alert("Invalid file type. Please upload JPG, PNG, or WebP.");
+  const handleLike = async (id) => {
+    const likedKey = `guestGallery_liked_${id}`;
+    if (localStorage.getItem(likedKey)) {
+      alert("You already voted for this memory.");
       return;
     }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image too large. Compressing it...");
-      try {
-        const compressedFile = await imageCompression(file, {
-          maxSizeMB: 4.5,
-          maxWidthOrHeight: 1920,
-          useWebWorker: true,
-        });
-        setImageFile(compressedFile);
-      } catch (error) {
-        console.error("Image compression failed:", error);
-      }
-    } else {
-      setImageFile(file);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this photo?")) return;
     try {
-      await deleteDoc(doc(db, "guestGallery", id));
-      setItems((prev) => prev.filter((item) => item.id !== id));
+      const itemRef = doc(db, "guestGallery", id);
+      const currentLikes = items.find((item) => item.id === id)?.likes || 0;
+      await updateDoc(itemRef, { likes: currentLikes + 1 });
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, likes: currentLikes + 1 } : item
+        )
+      );
+      localStorage.setItem(likedKey, "true");
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error("Error updating likes:", error);
     }
   };
 
@@ -120,92 +60,14 @@ export default function GuestGallery() {
   return (
     <div
       className="min-h-screen bg-cover bg-center relative pt-[100px]"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-      }}
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
         <h1 className="text-4xl font-bold text-white text-center mb-6 drop-shadow">
           Guest Gallery
         </h1>
-
-        {/* Add Memory Button */}
-        <div className="flex justify-center mb-6">
-          <button
-            onClick={() => setAdding(!adding)}
-            className="bg-yellow-200 text-gray-800 px-5 py-2 rounded-full shadow hover:bg-yellow-300 transition"
-          >
-            📸 Add Your Memory
-          </button>
-        </div>
-
-        {/* Add Form */}
-        {adding && (
-          <form
-            onSubmit={handleAdd}
-            className="bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-lg space-y-4 max-w-xl mx-auto mb-8"
-          >
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Title
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Description
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-                rows="3"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
-              ></textarea>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Your Name (Optional)
-              </label>
-              <input
-                type="text"
-                value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
-                className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-sea"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Upload Image (Optional)
-              </label>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleFileChange}
-                className="w-full text-gray-600"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-sea text-white py-3 rounded-lg hover:bg-sunset transition"
-            >
-              ✅ Save
-            </button>
-          </form>
-        )}
 
         {/* Gallery Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -225,6 +87,17 @@ export default function GuestGallery() {
                   No Image
                 </div>
               )}
+
+              {/* Edit Button (Admin only) */}
+              {currentUser?.email === ADMIN_EMAIL && (
+                <button
+                  onClick={() => navigate(`/gallery/edit/${item.id}`)}
+                  className="absolute top-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                >
+                  ✏️ Edit
+                </button>
+              )}
+
               <div className="p-5">
                 <h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
                 <p className="text-gray-600 mb-2">{item.description}</p>
@@ -235,15 +108,15 @@ export default function GuestGallery() {
                   Added: {formatDate(item.date)}
                 </span>
 
-                {/* Edit button (Admin only) */}
-                {currentUser?.email === ADMIN_EMAIL && (
+                {/* Like Button */}
+                <div className="flex items-center mt-3">
                   <button
-                    onClick={() => navigate(`/gallery/edit/${item.id}`)}
-                    className="absolute top-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                    onClick={() => handleLike(item.id)}
+                    className="flex items-center gap-1 text-red-500 hover:scale-105 transition"
                   >
-                    ✏️ Edit
+                    ❤️ {item.likes || 0}
                   </button>
-                )}
+                </div>
               </div>
             </div>
           ))}
