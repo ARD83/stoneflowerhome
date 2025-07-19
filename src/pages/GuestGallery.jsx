@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import backgroundImage from "../assets/explore-bg.jpg"; // same background
 
 export default function GuestGallery() {
@@ -65,16 +65,25 @@ export default function GuestGallery() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-white text-center mb-6 drop-shadow">
-          Guest Gallery
-        </h1>
+        {/* Title & Add Button */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-4xl font-bold text-white drop-shadow">
+            Guest Gallery
+          </h1>
+          <Link
+            to="/gallery/add"
+            className="bg-sea text-white px-4 py-2 rounded-lg hover:bg-sunset transition"
+          >
+            ➕ Add Memory
+          </Link>
+        </div>
 
         {/* Gallery Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {items.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative"
+              className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 relative flex flex-col"
             >
               {item.image ? (
                 <img
@@ -88,34 +97,41 @@ export default function GuestGallery() {
                 </div>
               )}
 
-              {/* Edit Button (Admin only) */}
-              {currentUser?.email === ADMIN_EMAIL && (
-                <button
-                  onClick={() => navigate(`/gallery/edit/${item.id}`)}
-                  className="absolute top-3 right-3 bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
-                >
-                  ✏️ Edit
-                </button>
-              )}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800">
+                    {item.title}
+                  </h2>
+                  <p className="text-gray-600 mb-2">{item.description}</p>
+                  {item.guestName && (
+                    <p className="text-sm text-gray-500">
+                      Shared by: {item.guestName}
+                    </p>
+                  )}
+                  <span className="text-sm text-gray-500">
+                    Added: {formatDate(item.date)}
+                  </span>
+                </div>
 
-              <div className="p-5">
-                <h2 className="text-xl font-bold text-gray-800">{item.title}</h2>
-                <p className="text-gray-600 mb-2">{item.description}</p>
-                {item.guestName && (
-                  <p className="text-sm text-gray-500">Shared by: {item.guestName}</p>
-                )}
-                <span className="text-sm text-gray-500">
-                  Added: {formatDate(item.date)}
-                </span>
-
-                {/* Like Button */}
-                <div className="flex items-center mt-3">
+                {/* Buttons Row */}
+                <div className="flex justify-end gap-2 mt-4">
+                  {/* Like Button */}
                   <button
                     onClick={() => handleLike(item.id)}
                     className="flex items-center gap-1 text-red-500 hover:scale-105 transition"
                   >
                     ❤️ {item.likes || 0}
                   </button>
+
+                  {/* Edit Button (Admin only) */}
+                  {currentUser?.email === ADMIN_EMAIL && (
+                    <button
+                      onClick={() => navigate(`/gallery/edit/${item.id}`)}
+                      className="bg-sea text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
+                    >
+                      ✏️ Edit
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
