@@ -66,8 +66,8 @@ export default function GuestGallery() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
         {/* Title & Add Button */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold text-white drop-shadow">
+        <div className="text-center py-12 text-white">
+          <h1 className="text-5xl font-bold drop-shadow-lg">
             Guest Gallery
           </h1>
           <Link
