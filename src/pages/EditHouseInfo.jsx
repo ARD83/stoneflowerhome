@@ -8,6 +8,7 @@ import {
   deleteDoc,
   doc,
   query,
+  where,
   orderBy,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -16,15 +17,29 @@ import { useNavigate } from "react-router-dom";
 
 export default function EditHouseInfo() {
   const [cards, setCards] = useState([]);
+  const [category, setCategory] = useState("House Rules");
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
 
+  const categories = [
+    "House Rules",
+    "Garbage",
+    "Pool Rules",
+    "Emergency Info",
+    "Nearby Services",
+    "Other",
+  ];
+
   useEffect(() => {
     async function fetchCards() {
       try {
-        const q = query(collection(db, "houseInfo"), orderBy("order"));
+        const q = query(
+          collection(db, "houseInfo"),
+          where("category", "==", category),
+          orderBy("order")
+        );
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -37,7 +52,7 @@ export default function EditHouseInfo() {
       }
     }
     fetchCards();
-  }, []);
+  }, [category]);
 
   const handleInputChange = (id, field, value) => {
     setCards((prev) =>
@@ -70,8 +85,12 @@ export default function EditHouseInfo() {
         link: "",
         image: "",
         order: cards.length + 1,
+        category: category,
       });
-      setCards((prev) => [...prev, { id: docRef.id, title: "", description: "", link: "", image: "" }]);
+      setCards((prev) => [
+        ...prev,
+        { id: docRef.id, title: "", description: "", link: "", image: "" },
+      ]);
     } catch (error) {
       console.error("Error adding card:", error);
     }
@@ -99,6 +118,19 @@ export default function EditHouseInfo() {
       <h1 className="text-3xl font-bold text-sea mb-6 text-center">
         Edit House Info
       </h1>
+
+      {/* Category Selector */}
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        className="w-full mb-4 p-2 border rounded focus:ring-2 focus:ring-sea"
+      >
+        {categories.map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
+      </select>
 
       {loading ? (
         <p>Loading…</p>
