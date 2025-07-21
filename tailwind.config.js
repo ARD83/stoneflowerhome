@@ -3,6 +3,10 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        title: ['"Libre Franklin"', 'sans-serif'],    // 🏷 Titles
+        body: ['"Libre Baskerville"', 'serif'],       // 📄 Body text
+      },
       colors: {
         sand: "#F1E5D1",
         sea: "#879D91",
