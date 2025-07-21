@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import backgroundImage from "../assets/houseinfo-bg.jpg";
+import backgroundImage from "../assets/explore-bg.jpg";
 
 export default function HouseInfo() {
   const [info, setInfo] = useState(null);
