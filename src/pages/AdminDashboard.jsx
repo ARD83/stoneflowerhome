@@ -56,7 +56,7 @@ export default function AdminDashboard() {
   to="/house-info/edit"
   className="block text-center bg-sea text-white py-2 rounded hover:bg-sunset"
 >
-  Edit House Info
+  🏠 Edit House Info
 </Link>
 
 
