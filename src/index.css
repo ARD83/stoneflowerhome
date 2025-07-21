@@ -4,5 +4,8 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Helvetica', sans-serif;
+  @apply font-body;
+}
+title {
+  @apply font-title;
 }
