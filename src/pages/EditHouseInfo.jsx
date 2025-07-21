@@ -1,69 +1,88 @@
 import React, { useEffect, useState } from "react";
 import { db, storage } from "../firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function EditHouseInfo() {
-  const [info, setInfo] = useState({
-    introduction: "",
-    rules: "",
-    rulesImage: "",
-    rulesLink: "",
-    garbage: "",
-    garbageImage: "",
-    garbageLink: "",
-    pool: "",
-    poolImage: "",
-    poolLink: "",
-    emergency: "",
-    emergencyImage: "",
-    emergencyLink: "",
-    services: "",
-    servicesImage: "",
-    servicesLink: "",
-  });
-  const navigate = useNavigate();
+  const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
 
   useEffect(() => {
-    async function fetchInfo() {
+    async function fetchCards() {
       try {
-        const docRef = doc(db, "settings", "houseInfo");
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setInfo(docSnap.data());
-        }
+        const q = query(collection(db, "houseInfo"), orderBy("order"));
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCards(data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching house info:", error);
+        console.error("Error loading cards:", error);
       }
     }
-    fetchInfo();
+    fetchCards();
   }, []);
 
-  const handleChange = (e) => {
-    setInfo({ ...info, [e.target.name]: e.target.value });
+  const handleInputChange = (id, field, value) => {
+    setCards((prev) =>
+      prev.map((card) => (card.id === id ? { ...card, [field]: value } : card))
+    );
   };
 
-  const handleImageUpload = async (e, field) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const imageRef = ref(storage, `houseInfo/${field}-${file.name}`);
+  const handleImageUpload = async (file, id) => {
+    const imageRef = ref(storage, `houseInfo/${Date.now()}-${file.name}`);
     await uploadBytes(imageRef, file);
     const url = await getDownloadURL(imageRef);
-    setInfo({ ...info, [field]: url });
+    handleInputChange(id, "image", url);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (id) => {
+    const card = cards.find((c) => c.id === id);
     try {
-      await setDoc(doc(db, "settings", "houseInfo"), info);
-      alert("House Information updated!");
-      navigate("/house-info");
+      await updateDoc(doc(db, "houseInfo", id), card);
+      alert("Card updated!");
     } catch (error) {
-      console.error("Error saving house info:", error);
+      console.error("Error saving card:", error);
+    }
+  };
+
+  const handleAddCard = async () => {
+    try {
+      const docRef = await addDoc(collection(db, "houseInfo"), {
+        title: "",
+        description: "",
+        link: "",
+        image: "",
+        order: cards.length + 1,
+      });
+      setCards((prev) => [...prev, { id: docRef.id, title: "", description: "", link: "", image: "" }]);
+    } catch (error) {
+      console.error("Error adding card:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "houseInfo", id));
+      setCards((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error("Error deleting card:", error);
     }
   };
 
@@ -76,52 +95,87 @@ export default function EditHouseInfo() {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto mt-20">
-      <h1 className="text-3xl font-bold text-sea mb-4 text-center">
+    <div className="p-4 max-w-4xl mx-auto mt-20">
+      <h1 className="text-3xl font-bold text-sea mb-6 text-center">
         Edit House Info
       </h1>
 
-      {["rules", "garbage", "pool", "emergency", "services"].map((section) => (
-        <div key={section} className="mb-6">
-          <h2 className="text-xl font-semibold text-olive mb-2 capitalize">{section}</h2>
-          <textarea
-            name={section}
-            value={info[section]}
-            onChange={handleChange}
-            rows="3"
-            className="w-full p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea mb-2"
-          />
-          <label className="block text-sm text-gray-600 mb-1">Optional Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleImageUpload(e, `${section}Image`)}
-            className="mb-2"
-          />
-          {info[`${section}Image`] && (
-            <img
-              src={info[`${section}Image`]}
-              alt={`${section} preview`}
-              className="rounded-lg shadow mb-2 max-h-48"
-            />
-          )}
-          <label className="block text-sm text-gray-600 mb-1">Optional Link</label>
-          <input
-            type="url"
-            name={`${section}Link`}
-            value={info[`${section}Link`]}
-            onChange={handleChange}
-            className="w-full p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
-          />
-        </div>
-      ))}
+      {loading ? (
+        <p>Loading…</p>
+      ) : (
+        <>
+          {cards.map((card) => (
+            <div
+              key={card.id}
+              className="bg-white rounded-xl shadow p-4 mb-4"
+            >
+              <input
+                type="text"
+                value={card.title}
+                onChange={(e) =>
+                  handleInputChange(card.id, "title", e.target.value)
+                }
+                placeholder="Title"
+                className="w-full mb-2 p-2 border rounded"
+              />
+              <textarea
+                value={card.description}
+                onChange={(e) =>
+                  handleInputChange(card.id, "description", e.target.value)
+                }
+                placeholder="Description"
+                className="w-full mb-2 p-2 border rounded"
+                rows="3"
+              />
+              <input
+                type="url"
+                value={card.link}
+                onChange={(e) =>
+                  handleInputChange(card.id, "link", e.target.value)
+                }
+                placeholder="Optional Link"
+                className="w-full mb-2 p-2 border rounded"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  handleImageUpload(e.target.files[0], card.id)
+                }
+                className="w-full mb-2"
+              />
+              {card.image && (
+                <img
+                  src={card.image}
+                  alt="Preview"
+                  className="rounded-lg mb-2 max-h-48"
+                />
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleSave(card.id)}
+                  className="flex-1 bg-sea text-white p-2 rounded hover:bg-sunset"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => handleDelete(card.id)}
+                  className="flex-1 bg-coral text-white p-2 rounded hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
 
-      <button
-        onClick={handleSave}
-        className="w-full bg-sea text-white p-2 rounded hover:bg-sunset"
-      >
-        Save Changes
-      </button>
+          <button
+            onClick={handleAddCard}
+            className="w-full bg-yellow-300 text-gray-800 p-2 rounded hover:bg-yellow-400"
+          >
+            ➕ Add New Card
+          </button>
+        </>
+      )}
     </div>
   );
 }
