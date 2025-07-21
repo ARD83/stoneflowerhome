@@ -1,7 +1,7 @@
-// src/pages/EditHouseInfo.jsx
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -9,10 +9,20 @@ export default function EditHouseInfo() {
   const [info, setInfo] = useState({
     introduction: "",
     rules: "",
+    rulesImage: "",
+    rulesLink: "",
     garbage: "",
+    garbageImage: "",
+    garbageLink: "",
     pool: "",
+    poolImage: "",
+    poolLink: "",
     emergency: "",
+    emergencyImage: "",
+    emergencyLink: "",
     services: "",
+    servicesImage: "",
+    servicesLink: "",
   });
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -35,6 +45,16 @@ export default function EditHouseInfo() {
 
   const handleChange = (e) => {
     setInfo({ ...info, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageRef = ref(storage, `houseInfo/${field}-${file.name}`);
+    await uploadBytes(imageRef, file);
+    const url = await getDownloadURL(imageRef);
+    setInfo({ ...info, [field]: url });
   };
 
   const handleSave = async () => {
@@ -60,20 +80,42 @@ export default function EditHouseInfo() {
       <h1 className="text-3xl font-bold text-sea mb-4 text-center">
         Edit House Info
       </h1>
-      {Object.keys(info).map((key) => (
-        <div key={key} className="mb-4">
-          <label className="block text-sm text-gray-600 mb-1 capitalize">
-            {key.replace(/([A-Z])/g, " $1")}
-          </label>
+
+      {["rules", "garbage", "pool", "emergency", "services"].map((section) => (
+        <div key={section} className="mb-6">
+          <h2 className="text-xl font-semibold text-olive mb-2 capitalize">{section}</h2>
           <textarea
-            name={key}
-            value={info[key]}
+            name={section}
+            value={info[section]}
             onChange={handleChange}
             rows="3"
+            className="w-full p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea mb-2"
+          />
+          <label className="block text-sm text-gray-600 mb-1">Optional Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleImageUpload(e, `${section}Image`)}
+            className="mb-2"
+          />
+          {info[`${section}Image`] && (
+            <img
+              src={info[`${section}Image`]}
+              alt={`${section} preview`}
+              className="rounded-lg shadow mb-2 max-h-48"
+            />
+          )}
+          <label className="block text-sm text-gray-600 mb-1">Optional Link</label>
+          <input
+            type="url"
+            name={`${section}Link`}
+            value={info[`${section}Link`]}
+            onChange={handleChange}
             className="w-full p-2 border border-olive rounded focus:outline-none focus:ring-2 focus:ring-sea"
           />
         </div>
       ))}
+
       <button
         onClick={handleSave}
         className="w-full bg-sea text-white p-2 rounded hover:bg-sunset"
