@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        title: ['"Libre Franklin"', 'sans-serif'],    // 🏷 Titles
-        body: ['"Libre Baskerville"', 'serif'],       // 📄 Body text
+        title: ['"Lobster"', 'sans-serif'],    // 🏷 Titles
+        body: ['"Roboto"', 'serif'],       // 📄 Body text
       },
       colors: {
         sand: "#F1E5D1",
