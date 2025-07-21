@@ -11,14 +11,14 @@ export default function HouseInfo() {
     async function fetchCards() {
       try {
         const q = query(collection(db, "houseInfo"), orderBy("order"));
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map((doc) => ({
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         setCards(data);
       } catch (error) {
-        console.error("Error fetching house info cards:", error);
+        console.error("Error loading house info:", error);
       }
     }
     fetchCards();
