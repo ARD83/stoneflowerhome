@@ -14,6 +14,8 @@ import EditGuestGallery from "./pages/EditGuestGallery";
 import AddGuestGallery from "./pages/AddGuestGallery.jsx";
 import HouseInfo from "./pages/HouseInfo";
 import ManageHouseInfo from "./pages/ManageHouseInfo";
+import AddHouseInfo from "./pages/AddHouseInfo";
+import EditHouseInfo from "./pages/EditHouseInfo";
 
 function Layout({ children }) {
   const location = useLocation();
@@ -88,6 +90,22 @@ export default function App() {
   element={
     <PrivateRoute>
       <ManageHouseInfo />
+    </PrivateRoute>
+  }
+/>
+          <Route
+  path="/house-info/add"
+  element={
+    <PrivateRoute>
+      <AddHouseInfo />
+    </PrivateRoute>
+  }
+/>
+          <Route
+  path="/house-info/edit"
+  element={
+    <PrivateRoute>
+      <EditHouseInfo />
     </PrivateRoute>
   }
 />
