@@ -61,7 +61,7 @@ export default function ManageHouseInfo() {
           <div className="flex justify-end">
             <button
               onClick={() => navigate("/house-info/add")}
-              className="flex items-center gap-2 bg-sea text-white px-4 py-2 rounded shadow hover:bg-sunset transition"
+              className="flex items-center gap-2 bg-yellow-200 text-white px-4 py-2 rounded shadow hover:bg-sunset transition"
             >
               ➕ Add New Info
             </button>
