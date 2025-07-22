@@ -85,18 +85,10 @@ export default function App() {
             }
           />
           <Route
-  path="/house-info/edit"
+  path="/house-info/manage"
   element={
     <PrivateRoute>
-      <EditHouseInfo />
-    </PrivateRoute>
-  }
-/>
-          <Route
-  path="/house-info/add"
-  element={
-    <PrivateRoute>
-      <AddHouseInfo />
+      <ManageHouseInfo />
     </PrivateRoute>
   }
 />
