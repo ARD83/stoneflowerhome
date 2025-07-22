@@ -247,7 +247,7 @@ export default function Explore() {
                     onClick={() => navigate(`/explore/edit/${item.id}`)}
                     className="absolute bottom-3 right-3 bg-yellow-200 text-white px-3 py-1 rounded-full text-sm hover:bg-sunset transition"
                   >
-                    ✏️ Edit
+                    Edit
                   </button>
                 )}
               </div>
