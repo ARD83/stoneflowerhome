@@ -13,8 +13,7 @@ import Home from "./pages/Home";
 import EditGuestGallery from "./pages/EditGuestGallery";
 import AddGuestGallery from "./pages/AddGuestGallery.jsx";
 import HouseInfo from "./pages/HouseInfo";
-import EditHouseInfo from "./pages/EditHouseInfo";
-import AddHouseInfo from "./pages/AddHouseInfo";
+import ManageHouseInfo from "./pages/ManageHouseInfo";
 
 function Layout({ children }) {
   const location = useLocation();
