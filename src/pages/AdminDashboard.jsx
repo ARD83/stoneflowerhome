@@ -53,10 +53,10 @@ export default function AdminDashboard() {
             📸 Manage Guest Gallery
           </Link>
           <Link
-  to="/house-info/edit"
+  to="/house-info/manage"
   className="block text-center bg-sea text-white py-2 rounded hover:bg-sunset"
 >
-  🏠 Edit House Info
+  🏠 Manage House Info
 </Link>
 
 
