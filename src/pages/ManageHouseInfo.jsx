@@ -53,19 +53,18 @@ export default function ManageHouseInfo() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4">
-        {/* Title & Add Button */}
-        <div className="mb-6">
+        {/* Title */}
+        <div className="text-center mb-6">
           <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-4">
             Manage House Info
           </h1>
-          <div className="flex justify-end">
-            <button
-              onClick={() => navigate("/house-info/add")}
-              className="flex items-center gap-2 bg-yellow-200 text-white px-4 py-2 rounded shadow hover:bg-sunset transition"
-            >
-              ➕ Add New Info
-            </button>
-          </div>
+          {/* Centered Add Button */}
+          <button
+            onClick={() => navigate("/house-info/add")}
+            className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition mx-auto"
+          >
+            ➕ Add New Info
+          </button>
         </div>
 
         {/* Info Cards */}
