@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/explore-bg.jpg"; // same background
 
 export default function GuestGallery() {
@@ -59,26 +59,28 @@ export default function GuestGallery() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative pt-[100px]"
+      className="min-h-screen bg-cover bg-center relative pt-[70px]" // 🔥 tighter top padding
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
-        {/* Title & Add Button */}
-        <div className="text-center py-12 text-white">
+        {/* Title & Description */}
+        <div className="text-center py-8 text-white"> {/* 🔥 tighter padding */}
           <h1 className="text-5xl font-bold drop-shadow-lg">Guest Gallery</h1>
           <p className="text-lg mt-3 max-w-xl mx-auto drop-shadow">
-            Share your memory.
+            Share your memory and inspire other guests.
           </p>
 
-          {/* Add Button */}
-          <button
-            onClick={() => navigate("/gallery/add")}
-            className="flex items-center gap-2 bg-yellow-200 text-gray-800 px-4 py-2 rounded-full shadow hover:bg-yellow-300 transition"
-          >
-            ➕ Add your Memory
-          </button>
+          {/* Add Button Centered Below */}
+          <div className="mt-6">
+            <button
+              onClick={() => navigate("/gallery/add")}
+              className="inline-flex items-center gap-2 bg-yellow-200 text-gray-800 px-5 py-2 rounded-full shadow hover:bg-yellow-300 transition"
+            >
+              ➕ Add your Memory
+            </button>
+          </div>
         </div>
 
         {/* Gallery Cards */}
