@@ -80,7 +80,7 @@ export default function Wifi() {
         {/* Admin Edit Form */}
         {currentUser && currentUser.email === ADMIN_EMAIL && (
           <div className="mt-8 bg-sea/10 rounded-xl p-4 shadow border border-sea">
-            <h2 className="text-sea font-semibold text-lg mb-4">Edit Wi‑Fi</h2>
+            <h2 className="text-white font-semibold text-lg mb-4">Edit Wi‑Fi</h2>
             <input
               type="text"
               placeholder="SSID"
