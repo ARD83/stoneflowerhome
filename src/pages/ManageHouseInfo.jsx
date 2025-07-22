@@ -53,16 +53,22 @@ export default function ManageHouseInfo() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold text-white">Manage House Info</h1>
-          <button
-            onClick={() => navigate("/house-info/add")}
-            className="bg-sea text-white px-4 py-2 rounded hover:bg-sunset transition"
-          >
-            ➕ Add New Info
-          </button>
+        {/* Title & Add Button */}
+        <div className="mb-6">
+          <h1 className="text-5xl font-bold text-white drop-shadow-lg mb-4">
+            Manage House Info
+          </h1>
+          <div className="flex justify-end">
+            <button
+              onClick={() => navigate("/house-info/add")}
+              className="flex items-center gap-2 bg-sea text-white px-4 py-2 rounded shadow hover:bg-sunset transition"
+            >
+              ➕ Add New Info
+            </button>
+          </div>
         </div>
 
+        {/* Info Cards */}
         <div className="space-y-6">
           {items.map((item) => (
             <div
