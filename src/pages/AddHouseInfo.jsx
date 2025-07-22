@@ -1,15 +1,40 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { db, storage } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import backgroundImage from "../assets/explore-bg.jpg";
 
 export default function AddHouseInfo() {
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
   const [imageFile, setImageFile] = useState(null);
+
+  if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-lg text-gray-700">Access Denied</p>
+      </div>
+    );
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        alert("Invalid file type. Please upload JPG, PNG, or WebP.");
+        return;
+      }
+      setImageFile(file);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,53 +51,88 @@ export default function AddHouseInfo() {
         description,
         link,
         image: imageUrl,
+        date: new Date(),
       });
-      navigate("/house-info");
+
+      navigate("/house-info/manage");
     } catch (error) {
       console.error("Error adding house info:", error);
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-20 p-4 bg-white rounded-lg shadow">
-      <h1 className="text-2xl font-bold mb-4 text-sea">Add House Info</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="border rounded p-2"
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows="3"
-          required
-          className="border rounded p-2"
-        />
-        <input
-          type="url"
-          placeholder="Optional Link"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          className="border rounded p-2"
-        />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImageFile(e.target.files[0])}
-          className="border rounded p-2"
-        />
-        <button
-          type="submit"
-          className="bg-sea text-white py-2 rounded hover:bg-sunset transition"
+    <div
+      className="min-h-screen bg-cover bg-center relative pt-[80px]"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
+
+      <div className="relative z-10 max-w-3xl mx-auto px-4">
+        {/* Title */}
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-4">
+            Add House Info
+          </h1>
+        </div>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-2xl shadow-md p-6"
         >
-          Save
-        </button>
-      </form>
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full p-2 border border-olive rounded"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="4"
+              required
+              className="w-full p-2 border border-olive rounded"
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Optional Link</label>
+            <input
+              type="url"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="https://example.com"
+              className="w-full p-2 border border-olive rounded"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Upload Image</label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-yellow-200 text-gray-800 px-6 py-2 rounded-full shadow hover:bg-yellow-300 transition"
+            >
+              ➕ Add Info
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
