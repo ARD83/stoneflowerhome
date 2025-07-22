@@ -1,213 +1,188 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { db, storage } from "../firebase";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  query,
-  where,
-  orderBy,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/explore-bg.jpg";
 
 export default function EditHouseInfo() {
-  const [cards, setCards] = useState([]);
-  const [category, setCategory] = useState("House Rules");
-  const [loading, setLoading] = useState(true);
-  const { currentUser } = useAuth();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
 
-  const categories = [
-    "House Rules",
-    "Garbage",
-    "Pool Rules",
-    "Emergency Info",
-    "Nearby Services",
-    "Other",
-  ];
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [link, setLink] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
-    async function fetchCards() {
+    async function fetchData() {
       try {
-        const q = query(
-          collection(db, "houseInfo"),
-          where("category", "==", category),
-          orderBy("order")
-        );
-        const snapshot = await getDocs(q);
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setCards(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error loading cards:", error);
+        const docRef = doc(db, "houseInfo", id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setTitle(data.title);
+          setDescription(data.description);
+          setLink(data.link || "");
+          setImageUrl(data.image || "");
+        } else {
+          console.error("House Info not found");
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
       }
     }
-    fetchCards();
-  }, [category]);
+    fetchData();
+  }, [id]);
 
-  const handleInputChange = (id, field, value) => {
-    setCards((prev) =>
-      prev.map((card) => (card.id === id ? { ...card, [field]: value } : card))
-    );
-  };
-
-  const handleImageUpload = async (file, id) => {
-    const imageRef = ref(storage, `houseInfo/${Date.now()}-${file.name}`);
-    await uploadBytes(imageRef, file);
-    const url = await getDownloadURL(imageRef);
-    handleInputChange(id, "image", url);
-  };
-
-  const handleSave = async (id) => {
-    const card = cards.find((c) => c.id === id);
-    try {
-      await updateDoc(doc(db, "houseInfo", id), card);
-      alert("Card updated!");
-    } catch (error) {
-      console.error("Error saving card:", error);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        alert("Invalid file type. Please upload JPG, PNG, or WebP.");
+        return;
+      }
+      setImageFile(file);
     }
   };
 
-  const handleAddCard = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     try {
-      const docRef = await addDoc(collection(db, "houseInfo"), {
-        title: "",
-        description: "",
-        link: "",
-        image: "",
-        order: cards.length + 1,
-        category: category,
+      let updatedImageUrl = imageUrl;
+
+      if (imageFile) {
+        const imageRef = ref(storage, `houseInfo/${imageFile.name}`);
+        await uploadBytes(imageRef, imageFile);
+        updatedImageUrl = await getDownloadURL(imageRef);
+      }
+
+      await updateDoc(doc(db, "houseInfo", id), {
+        title,
+        description,
+        link,
+        image: updatedImageUrl,
       });
-      setCards((prev) => [
-        ...prev,
-        { id: docRef.id, title: "", description: "", link: "", image: "" },
-      ]);
-    } catch (error) {
-      console.error("Error adding card:", error);
+
+      navigate("/house-info/manage");
+    } catch (err) {
+      console.error("Error saving changes:", err);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this entry?")) return;
     try {
       await deleteDoc(doc(db, "houseInfo", id));
-      setCards((prev) => prev.filter((c) => c.id !== id));
-    } catch (error) {
-      console.error("Error deleting card:", error);
+      navigate("/house-info/manage");
+    } catch (err) {
+      console.error("Error deleting entry:", err);
     }
   };
 
   if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
     return (
-      <div className="flex justify-center items-center h-screen bg-sand">
-        <p className="text-sea text-lg">Access Denied</p>
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-lg text-gray-700">Access Denied</p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto mt-20">
-      <h1 className="text-3xl font-bold text-sea mb-6 text-center">
-        Edit House Info
-      </h1>
+    <div
+      className="min-h-screen bg-cover bg-center relative pt-[80px]"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
-      {/* Category Selector */}
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        className="w-full mb-4 p-2 border rounded focus:ring-2 focus:ring-sea"
-      >
-        {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
+      <div className="relative z-10 max-w-3xl mx-auto px-4">
+        {/* Title */}
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-4">
+            Edit House Info
+          </h1>
+        </div>
 
-      {loading ? (
-        <p>Loading…</p>
-      ) : (
-        <>
-          {cards.map((card) => (
-            <div
-              key={card.id}
-              className="bg-white rounded-xl shadow p-4 mb-4"
-            >
-              <input
-                type="text"
-                value={card.title}
-                onChange={(e) =>
-                  handleInputChange(card.id, "title", e.target.value)
-                }
-                placeholder="Title"
-                className="w-full mb-2 p-2 border rounded"
+        {/* Form */}
+        <form
+          onSubmit={handleSave}
+          className="bg-white rounded-2xl shadow-md p-6"
+        >
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full p-2 border border-olive rounded"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="4"
+              required
+              className="w-full p-2 border border-olive rounded"
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Optional Link</label>
+            <input
+              type="url"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="https://example.com"
+              className="w-full p-2 border border-olive rounded"
+            />
+          </div>
+
+          {imageUrl && (
+            <div className="mb-4">
+              <img
+                src={imageUrl}
+                alt="Current"
+                className="rounded-lg shadow max-h-48 mx-auto"
               />
-              <textarea
-                value={card.description}
-                onChange={(e) =>
-                  handleInputChange(card.id, "description", e.target.value)
-                }
-                placeholder="Description"
-                className="w-full mb-2 p-2 border rounded"
-                rows="3"
-              />
-              <input
-                type="url"
-                value={card.link}
-                onChange={(e) =>
-                  handleInputChange(card.id, "link", e.target.value)
-                }
-                placeholder="Optional Link"
-                className="w-full mb-2 p-2 border rounded"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) =>
-                  handleImageUpload(e.target.files[0], card.id)
-                }
-                className="w-full mb-2"
-              />
-              {card.image && (
-                <img
-                  src={card.image}
-                  alt="Preview"
-                  className="rounded-lg mb-2 max-h-48"
-                />
-              )}
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleSave(card.id)}
-                  className="flex-1 bg-sea text-white p-2 rounded hover:bg-sunset"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => handleDelete(card.id)}
-                  className="flex-1 bg-coral text-white p-2 rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
             </div>
-          ))}
+          )}
 
-          <button
-            onClick={handleAddCard}
-            className="w-full bg-yellow-300 text-gray-800 p-2 rounded hover:bg-yellow-400"
-          >
-            ➕ Add New Card
-          </button>
-        </>
-      )}
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Replace Image</label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex justify-between gap-4 mt-6">
+            <button
+              type="submit"
+              className="flex-1 bg-sea text-white px-4 py-2 rounded-full shadow hover:bg-sunset transition"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="flex-1 bg-coral text-white px-4 py-2 rounded-full shadow hover:bg-red-700 transition"
+            >
+              Delete Entry
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
