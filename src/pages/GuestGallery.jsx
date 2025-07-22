@@ -59,7 +59,7 @@ export default function GuestGallery() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative pt-[70px]" // 🔥 tighter top padding
+      className="min-h-screen bg-cover bg-center relative pt-[50px]" // 🔥 tighter top padding
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
