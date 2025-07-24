@@ -102,7 +102,7 @@ export default function App() {
   }
 />
           <Route
-  path="/house-info/edit"
+  path="/house-info/edit/:id"
   element={
     <PrivateRoute>
       <EditHouseInfo />
