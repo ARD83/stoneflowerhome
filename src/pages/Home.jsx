@@ -1,16 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/beach-background.png";
+import backgroundImage from "../assets/homepage-modern.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
 
   const buttons = [
-    { label: "Wi-Fi", path: "/wifi" },
-    { label: "Explore", path: "/explore" },
-    { label: "Guest Gallery", path: "/gallery" },
-    { label: "House Info", path: "/house-info" },
-    { label: "Admin", path: "/admin" },
+
+    { label: "Explore", path: "/explore", colorClass: "bg-green-300 hover:bg-green-400" },
+    { label: "Guest Gallery", path: "/gallery", colorClass: "bg-pink-300 hover:bg-pink-400" },
+    { label: "House Info", path: "/house-info", colorClass: "bg-purple-300 hover:bg-purple-400" },
+    { label: "Wi‑Fi", path: "/wifi", colorClass: "bg-blue-300 hover:bg-blue-400" },
+    { label: "Admin", path: "/admin", colorClass: "bg-red-300 hover:bg-red-400" },
   ];
 
   return (
@@ -31,7 +32,7 @@ export default function Home() {
             <button
               key={btn.label}
               onClick={() => navigate(btn.path)}
-              className="w-full sm:w-auto bg-yellow-300 hover:bg-yellow-400 text-navy-900 font-semibold py-3 px-6 rounded-xl shadow-md transition"
+              className={`w-full sm:w-auto ${btn.colorClass} text-navy-900 font-semibold py-3 px-6 rounded-xl shadow-md transition`}
             >
               {btn.label}
             </button>
