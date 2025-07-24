@@ -1,64 +1,41 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import bgImage from "../assets/beach-background.png"; // ✅ Your background
+import backgroundImage from "../assets/beach_backround.jpg";
 
 export default function Home() {
   const navigate = useNavigate();
 
+  const buttons = [
+    { label: "Wi-Fi", path: "/wifi" },
+    { label: "Explore", path: "/explore" },
+    { label: "Guest Gallery", path: "/gallery" },
+    { label: "House Info", path: "/house-info" },
+    { label: "Admin", path: "/admin" },
+  ];
+
   return (
     <div
-      className="min-h-screen bg-cover bg-center relative"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-      }}
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4 py-20 text-center"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      {/* Soft overlay */}
-      <div className="absolute inset-0 bg-black/30"></div>
+      <div className="bg-white/80 backdrop-blur-md rounded-xl p-8 shadow-lg max-w-2xl w-full">
+        <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-yellow-600 font-serif">
+          Welcome to Stoneflower Home
+        </h1>
+        <p className="text-lg text-gray-700 mb-6 font-sans">
+          Your peaceful escape in Sardinia.
+        </p>
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
-        <div className="text-center text-white mb-10 drop-shadow-lg">
-          <h1 className="text-5xl font-bold mb-2">Welcome</h1>
-          <p className="text-xl">Your Sardinian vacation home</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-md">
-          <button
-            onClick={() => navigate("/explore")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">🌅</span>
-            <span className="mt-2 text-lg font-medium text-sea">Discover</span>
-          </button>
-          <button
-            onClick={() => navigate("/gallery")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">📸</span>
-            <span className="mt-2 text-lg font-medium text-sea">Guest Gallery</span>
-          </button>
-          
-          <button
-            onClick={() => navigate("/house-info")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">🏠</span>
-            <span className="mt-2 text-lg font-medium text-sea">House Info</span>
-          </button>
-          <button
-            onClick={() => navigate("/wifi")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">📶</span>
-            <span className="mt-2 text-lg font-medium text-sea">Wi-Fi</span>
-          </button>
-          <button
-            onClick={() => navigate("/admin")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">🔑</span>
-            <span className="mt-2 text-lg font-medium text-sea">Admin</span>
-          </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {buttons.map((btn) => (
+            <button
+              key={btn.label}
+              onClick={() => navigate(btn.path)}
+              className="w-full sm:w-auto bg-yellow-300 hover:bg-yellow-400 text-navy-900 font-semibold py-3 px-6 rounded-xl shadow-md transition"
+            >
+              {btn.label}
+            </button>
+          ))}
         </div>
       </div>
     </div>
