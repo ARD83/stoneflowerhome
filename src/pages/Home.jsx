@@ -28,7 +28,7 @@ export default function Home() {
             className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
           >
             <span className="text-4xl">🌅</span>
-            <span className="mt-2 text-lg font-medium text-sea">Explore</span>
+            <span className="mt-2 text-lg font-medium text-sea">Discover</span>
           </button>
           <button
             onClick={() => navigate("/gallery")}
@@ -37,6 +37,14 @@ export default function Home() {
             <span className="text-4xl">📸</span>
             <span className="mt-2 text-lg font-medium text-sea">Guest Gallery</span>
           </button>
+          
+          <button
+            onClick={() => navigate("/house-info")}
+            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
+          >
+            <span className="text-4xl">🏠</span>
+            <span className="mt-2 text-lg font-medium text-sea">House Info</span>
+          </button>
           <button
             onClick={() => navigate("/wifi")}
             className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
@@ -44,13 +52,6 @@ export default function Home() {
             <span className="text-4xl">📶</span>
             <span className="mt-2 text-lg font-medium text-sea">Wi-Fi</span>
           </button>
-          <button
-            onClick={() => navigate("/house-info")}
-            className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
-          >
-            <span className="text-4xl">🏠</span>
-            <span className="mt-2 text-lg font-medium text-sea">House Info</span>
-          </button>    
           <button
             onClick={() => navigate("/admin")}
             className="flex flex-col items-center justify-center bg-white/70 rounded-xl p-6 shadow hover:bg-white transition"
