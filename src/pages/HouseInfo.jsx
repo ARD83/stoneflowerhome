@@ -35,7 +35,7 @@ export default function HouseInfo() {
           House Information
         </h1>
 
-        {items.map((item, index) => (
+        {items.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-3xl shadow hover:shadow-lg transition transform hover:-translate-y-1 mb-8 flex flex-col md:flex-row"
@@ -55,7 +55,10 @@ export default function HouseInfo() {
             {/* Text Content */}
             <div className="p-6 flex-1">
               <h2 className="text-2xl font-bold text-sea mb-2">{item.title}</h2>
-              <p className="text-gray-700 mb-3">{item.description}</p>
+              <div
+                className="text-gray-700 prose max-w-none mb-3"
+                dangerouslySetInnerHTML={{ __html: item.description }}
+              ></div>
               {item.link && (
                 <a
                   href={item.link}
