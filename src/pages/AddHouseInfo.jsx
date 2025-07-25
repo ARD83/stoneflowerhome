@@ -101,7 +101,7 @@ export default function AddHouseInfo() {
               rows="4"
               required
               className="w-full p-2 border border-olive rounded"
-            >
+            />
           </div>
 
           <div className="mb-4">
