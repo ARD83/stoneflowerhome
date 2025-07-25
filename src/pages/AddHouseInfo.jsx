@@ -97,7 +97,7 @@ export default function AddHouseInfo() {
             <label className="block mb-1 text-sea font-medium">Description</label>
             <ReactQuill
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(content) => setDescription(content)}
               rows="4"
               required
               className="w-full p-2 border border-olive rounded"
