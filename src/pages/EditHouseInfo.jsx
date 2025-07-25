@@ -5,6 +5,8 @@ import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../contexts/AuthContext";
 import backgroundImage from "../assets/explore-bg.jpg";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export default function EditHouseInfo() {
   const { id } = useParams();
@@ -126,13 +128,13 @@ export default function EditHouseInfo() {
 
           <div className="mb-4">
             <label className="block mb-1 text-sea font-medium">Description</label>
-            <textarea
+            <ReactQuill
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows="4"
               required
               className="w-full p-2 border border-olive rounded"
-            ></textarea>
+            >
           </div>
 
           <div className="mb-4">
