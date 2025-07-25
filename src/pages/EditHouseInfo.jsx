@@ -130,7 +130,7 @@ export default function EditHouseInfo() {
             <label className="block mb-1 text-sea font-medium">Preview</label>
             <div
               className="prose max-w-none p-4 bg-gray-50 border border-gray-300 rounded"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description) }}
             />
           </div>
           <div className="mb-4">
