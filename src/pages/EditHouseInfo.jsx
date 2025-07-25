@@ -142,7 +142,7 @@ export default function EditHouseInfo() {
             <input
               type="url"
               value={link}
-              onChange={(e) => setLink(e.target.value)}
+              onChange={(content) => setDescription(content)}
               placeholder="https://example.com"
               className="w-full p-2 border border-olive rounded"
             />
