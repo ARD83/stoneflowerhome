@@ -103,18 +103,13 @@ export default function EditHouseInfo() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-3xl mx-auto px-4">
-        {/* Title */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-4">
             Edit House Info
           </h1>
         </div>
 
-        {/* Form */}
-        <form
-          onSubmit={handleSave}
-          className="bg-white rounded-2xl shadow-md p-6"
-        >
+        <form onSubmit={handleSave} className="bg-white rounded-2xl shadow-md p-6">
           <div className="mb-4">
             <label className="block mb-1 text-sea font-medium">Title</label>
             <input
@@ -128,13 +123,7 @@ export default function EditHouseInfo() {
 
           <div className="mb-4">
             <label className="block mb-1 text-sea font-medium">Description</label>
-            <ReactQuill
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              required
-              className="w-full p-2 border border-olive rounded"
-            />
+            <ReactQuill value={description} onChange={setDescription} />
           </div>
 
           <div className="mb-4">
@@ -142,7 +131,7 @@ export default function EditHouseInfo() {
             <input
               type="url"
               value={link}
-              onChange={(content) => setDescription(content)}
+              onChange={(e) => setLink(e.target.value)}
               placeholder="https://example.com"
               className="w-full p-2 border border-olive rounded"
             />
