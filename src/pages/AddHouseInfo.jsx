@@ -9,22 +9,14 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 export default function AddHouseInfo() {
-  const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const ADMIN_EMAIL = "stoneflowerhome@gmail.com";
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(""); // HTML string
   const [link, setLink] = useState("");
   const [imageFile, setImageFile] = useState(null);
-
-  if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <p className="text-lg text-gray-700">Access Denied</p>
-      </div>
-    );
-  }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -40,8 +32,10 @@ export default function AddHouseInfo() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       let imageUrl = "";
+
       if (imageFile) {
         const imageRef = ref(storage, `houseInfo/${imageFile.name}`);
         await uploadBytes(imageRef, imageFile);
@@ -50,17 +44,25 @@ export default function AddHouseInfo() {
 
       await addDoc(collection(db, "houseInfo"), {
         title,
-        description,
+        description, // stored as HTML
         link,
         image: imageUrl,
         date: new Date(),
       });
 
       navigate("/house-info/manage");
-    } catch (error) {
-      console.error("Error adding house info:", error);
+    } catch (err) {
+      console.error("Error adding house info:", err);
     }
   };
+
+  if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <p className="text-lg text-gray-700">Access Denied</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -70,18 +72,13 @@ export default function AddHouseInfo() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/10"></div>
 
       <div className="relative z-10 max-w-3xl mx-auto px-4">
-        {/* Title */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-4">
             Add House Info
           </h1>
         </div>
 
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-md p-6"
-        >
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-md p-6">
           <div className="mb-4">
             <label className="block mb-1 text-sea font-medium">Title</label>
             <input
@@ -95,13 +92,7 @@ export default function AddHouseInfo() {
 
           <div className="mb-4">
             <label className="block mb-1 text-sea font-medium">Description</label>
-            <ReactQuill
-              value={description}
-              onChange={(content) => setDescription(content)}
-              rows="4"
-              required
-              className="w-full p-2 border border-olive rounded"
-            />
+            <ReactQuill value={description} onChange={setDescription} className="bg-white" />
           </div>
 
           <div className="mb-4">
@@ -116,7 +107,7 @@ export default function AddHouseInfo() {
           </div>
 
           <div className="mb-4">
-            <label className="block mb-1 text-sea font-medium">Upload Image</label>
+            <label className="block mb-1 text-sea font-medium">Image (optional)</label>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
@@ -125,12 +116,12 @@ export default function AddHouseInfo() {
             />
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-6">
             <button
               type="submit"
-              className="bg-yellow-200 text-gray-800 px-6 py-2 rounded-full shadow hover:bg-yellow-300 transition"
+              className="bg-sea text-white px-6 py-2 rounded-full shadow hover:bg-sunset transition"
             >
-              ➕ Add Info
+              Save Entry
             </button>
           </div>
         </form>
