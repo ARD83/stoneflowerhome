@@ -7,6 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import backgroundImage from "../assets/explore-bg.jpg";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import DOMPurify from "dompurify";
 
 export default function EditHouseInfo() {
   const { id } = useParams();
@@ -125,7 +126,13 @@ export default function EditHouseInfo() {
             <label className="block mb-1 text-sea font-medium">Description</label>
             <ReactQuill value={description} onChange={setDescription} />
           </div>
-
+          <div className="mb-4">
+            <label className="block mb-1 text-sea font-medium">Preview</label>
+            <div
+              className="prose max-w-none p-4 bg-gray-50 border border-gray-300 rounded"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }}
+            />
+          </div>
           <div className="mb-4">
             <label className="block mb-1 text-sea font-medium">Optional Link</label>
             <input
