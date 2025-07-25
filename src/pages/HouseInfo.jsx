@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import backgroundImage from "../assets/explore-bg.jpg";
+import DOMPurify from "dompurify";
 
 export default function HouseInfo() {
   const [items, setItems] = useState([]);
