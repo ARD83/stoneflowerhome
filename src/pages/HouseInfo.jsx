@@ -58,7 +58,7 @@ export default function HouseInfo() {
               <h2 className="text-2xl font-bold text-sea mb-2">{item.title}</h2>
               <div
                 className="text-gray-700 prose max-w-none mb-3"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description) }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description) }}
               ></div>
               {item.link && (
                 <a
